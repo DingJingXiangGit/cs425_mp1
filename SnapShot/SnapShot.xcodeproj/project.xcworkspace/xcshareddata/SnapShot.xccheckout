@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>0D7C237C-19A3-4F10-AB4D-6CE34BB81E90</string>
+	<key>IDESourceControlProjectName</key>
+	<string>SnapShot</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>2842066F-43D3-4133-B27F-9EED3905E634</key>
+		<string>https://github.com/virtued/cs425_mp1.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>SnapShot/SnapShot.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>2842066F-43D3-4133-B27F-9EED3905E634</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/virtued/cs425_mp1.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>2842066F-43D3-4133-B27F-9EED3905E634</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>2842066F-43D3-4133-B27F-9EED3905E634</string>
+			<key>IDESourceControlWCCName</key>
+			<string>cs425_mp1</string>
+		</dict>
+	</array>
+</dict>
+</plist>

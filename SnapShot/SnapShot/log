@@ -1,0 +1,12 @@
+Process ID is 1
+Peer Information File is /Users/Virtue/Courses/CS425/cs425_mp1/peer_list
+{peer id: 1, ip: 127.0.0.1, port: 8001, out state: {money: 0, widgets: 0}, in state: {money: 0, widgets: 0}}
+{peer id: 2, ip: 127.0.0.1, port: 8002, out state: {money: 0, widgets: 0}, in state: {money: 0, widgets: 0}}
+start binding
+setnadr tb icnodninnegc
+tisntga rtto  l1i2s7t.e0n.i0n.g1
+:8002
+end listening
+2 connection setup completed.
+Outgoing connection setup completed.
+start accepting
