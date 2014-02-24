@@ -24,7 +24,7 @@ public:
     virtual ~State();
 };
 
-class ChannelState: State{
+class ChannelState: public State{
 public:
     unsigned _source;
     unsigned _destination;

@@ -21,6 +21,9 @@ const char* AbstractMessage::ACTION_MSG_PARSE = "{money:%d, widgets:%d, time:%d}
 const char* AbstractMessage::ACTION_MARKER_PARSE = "{snapshotId:%d, initiator:%d, time:%d}";
 const char* AbstractMessage::ACTION_MARKER = "{snapshotId:%04d, initiator:%04d, time:%012d, vector:%s}";
 
+AbstractMessage::AbstractMessage(){
+}
+
 Message::Message(){
     _action = PURCHASE_ACTION;
     _widgets = 0;
@@ -52,13 +55,15 @@ void parseTimeVector( vector<unsigned>& timeVector, string& input, string delimi
 
 Message::Message(unsigned action, int pid, char* msg){
     std::string delimiter = ", ";
-    if(action == PURCHASE_ACTION || action == DELIVERY_ACTION){
-        std::string timeString(msg);
-        sscanf(msg, ACTION_MSG_PARSE, &_money, &_widgets, &_time);
-        timeString = timeString.substr(timeString.find("[") + 1, timeString.find("]") - timeString.find("[") - 1);
-        _action = action;
-        _timeVector = std::vector<unsigned>();
-        parseTimeVector(_timeVector, timeString, delimiter);
+    _pid = pid;
+    //if(action == PURCHASE_ACTION || action == DELIVERY_ACTION){
+    std::string timeString(msg);
+    sscanf(msg, ACTION_MSG_PARSE, &_money, &_widgets, &_time);
+    timeString = timeString.substr(timeString.find("[") + 1, timeString.find("]") - timeString.find("[") - 1);
+    _action = action;
+    _timeVector = std::vector<unsigned>();
+    parseTimeVector(_timeVector, timeString, delimiter);
+    /*
     }else{
         std::string timeString(msg);
         sscanf(msg, ACTION_MARKER_PARSE, &_time);
@@ -68,29 +73,31 @@ Message::Message(unsigned action, int pid, char* msg){
         _money = 0;
         _timeVector = std::vector<unsigned>();
         parseTimeVector(_timeVector, timeString, delimiter);
-    }
-    _pid = pid;
+    }*/
+    
 }
 
 std::string Message::toString(){
     using namespace std;
-    if(_action == PURCHASE_ACTION||_action == DELIVERY_ACTION){
-        char buff[ACTION_HEADER_SIZE+1];
-        stringstream ss;
-        ss << "{money:"<<setw(5)<<setfill('0')<<_money<<", ";
-        ss << "widgets:"<<setw(5)<<setfill('0')<<_widgets<<", ";
-        ss << "time:"<<setw(12)<<setfill('0')<<_time<<", ";
-        ss << "vector:[";
-        for(int i = 0; i < _timeVector.size(); ++i){
-            ss<<_timeVector[i]<<", ";
-        }
-        ss << "]}";
-        string content = ss.str();
-        sprintf(buff, ACTION_HEADER_FORMAT, _action, content.size());
-        ss.str("");
-        ss<<buff<<content;
-        return ss.str();
-    }else{
+    //if(_action == PURCHASE_ACTION||_action == DELIVERY_ACTION){
+    char buff[ACTION_HEADER_SIZE+1];
+    stringstream ss;
+    ss << "{money:"<<setw(5)<<setfill('0')<<_money<<", ";
+    ss << "widgets:"<<setw(5)<<setfill('0')<<_widgets<<", ";
+    ss << "time:"<<setw(12)<<setfill('0')<<_time<<", ";
+    ss << "vector:[";
+    for(int i = 0; i < _timeVector.size(); ++i){
+        ss<<_timeVector[i]<<", ";
+    }
+    ss << "]}";
+    string content = ss.str();
+    sprintf(buff, ACTION_HEADER_FORMAT, _action, content.size());
+    ss.str("");
+    ss<<buff<<content;
+    return ss.str();
+    // }
+    
+    /*else{
         char buff[ACTION_HEADER_SIZE+1];
         stringstream ss;
         ss << "{time:"<<setw(12)<<setfill('0')<<_time<<", ";
@@ -104,7 +111,7 @@ std::string Message::toString(){
         ss.str("");
         ss<<buff<<content;
         return ss.str();
-    }
+    }*/
 };
 
 char* Message::toCharArray(){
@@ -119,6 +126,26 @@ char* Message::toCharArray(){
 
 MarkerMessage::MarkerMessage(){
     _action = MARKER_ACTION;
+};
+
+MarkerMessage::MarkerMessage(unsigned action, int pid, char* msg){
+    std::string delimiter = ", ";
+    _action = MARKER_ACTION;
+    _pid = pid;
+    std::string timeString(msg);
+    sscanf(msg, ACTION_MARKER_PARSE, &_snapshotId, &_initiator, &_time);
+    timeString = timeString.substr(timeString.find("[") + 1, timeString.find("]") - timeString.find("[") - 1);
+    _timeVector = std::vector<unsigned>();
+    parseTimeVector(_timeVector, timeString, delimiter);
+};
+
+MarkerMessage::MarkerMessage(const MarkerMessage& other ){
+    _action = other._action;
+    _snapshotId = other._snapshotId;
+    _time = other._time;
+    _initiator = other._initiator;
+    _pid = other._pid;
+    _timeVector = std::vector<unsigned>(other._timeVector);
 };
 
 std::string MarkerMessage::toString(){
@@ -146,6 +173,9 @@ char* MarkerMessage::toCharArray(){
     strcpy(result, stringFormat.c_str());
     return result;
 }
+
+
+
 
 
 

@@ -52,7 +52,13 @@ void ReceiveThread::execute(){
             memset(content, 0 , sizeof(content));
             //std::cout<<"tcp read header finished."<<std::endl;
             if(tcpRead(_socket, content, size)){
-                Message* message = new Message(action, _pid, content);
+                AbstractMessage* message = NULL;
+                if(action == AbstractMessage::PURCHASE_ACTION || action == AbstractMessage::DELIVERY_ACTION){
+                    message = new Message(action, _pid, content);
+                }else{
+                    message = new MarkerMessage(action, _pid, content);
+                }
+                
                 //std::cout<<"tcp read content finished."<<std::endl;
                 _parent->queueInCommingMessage(message);
                 //std::cout<<message->toString()<<std::endl;

@@ -28,36 +28,36 @@ public:
     static const int DELIVERY_ACTION = 2;
     static const int MARKER_ACTION = 3;
     static const int TIME_VECTOR_LENGTH = 256;
+    AbstractMessage();
+    int _action;
+    unsigned _time;
+    std::vector<unsigned> _timeVector;
+    int _pid;
+    
+    virtual std::string toString() = 0;
+    virtual char* toCharArray() = 0;
 };
 
-class Message : AbstractMessage{
+class Message : public AbstractMessage{
     public:
-        int _pid;
-        int _action;
         unsigned _money;
         unsigned _widgets;
-        unsigned _time;
-        std::vector<unsigned> _timeVector;
         Message(unsigned action, int pid, char* msg);
         Message(const Message& other );
         Message();
-        std::string toString();
-        char* toCharArray();
+        virtual std::string toString();
+        virtual char* toCharArray();
 };
 
-class MarkerMessage : AbstractMessage{
+class MarkerMessage : public AbstractMessage{
 public:
-    static const char* ACTION_MARKER_PARSE;
-    static const char* ACTION_MARKER;
-    int _pid;
-    int _action;
-    unsigned _time;
     unsigned _snapshotId;
     unsigned _initiator;
-    std::vector<unsigned> _timeVector;
     MarkerMessage();
-    std::string toString();
-    char* toCharArray();
+    MarkerMessage(unsigned action, int pid, char* msg);
+    MarkerMessage(const MarkerMessage& other );
+    virtual std::string toString();
+    virtual char* toCharArray();
 };
 
 class InitMessage{

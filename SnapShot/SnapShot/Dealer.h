@@ -28,7 +28,7 @@ typedef std::list<ReceiveThread*> InThreadList;
 typedef std::list<SendThread*> OutThreadList;
 typedef std::map<int, Peer*> PeerTable;
 typedef std::map<int, int> SocketTable;
-typedef std::map<int, std::vector<Message*> > MessageStore;
+typedef std::map<int, std::vector<AbstractMessage*> > MessageStore;
 typedef std::map<unsigned, std::map<unsigned, SnapShot*> > SnapShotTable;
 class Dealer:TCPUtility{
     private:
@@ -46,15 +46,13 @@ class Dealer:TCPUtility{
         sem_t* _outMessageSem;
         std::string _inSemName;
         std::string _outSemName;
-        //int _port;
-        //unsigned _time;
-        //std::vector<unsigned> _timeVector;
+
     
         State* _state;
         Peer* _selfInfo;
         PeerTable* _peerTable;
-        std::deque<Message*> _inMessageQueue;
-        std::deque<Message*> _outMessageQueue;
+        std::deque<AbstractMessage*> _inMessageQueue;
+        std::deque<AbstractMessage*> _outMessageQueue;
     
         pthread_t _listenThread;
         pthread_t _connectThread;
@@ -66,7 +64,9 @@ class Dealer:TCPUtility{
         OutThreadList _outThreads;
         MessageStore _messageStore;
         SnapShotTable _snapshotTable;
-
+    
+        std::map<unsigned, std::vector<SnapShot*> > recordingTable;
+    
         void waitForPeers();
         void connectPeers();
         static void* startListenThread(void* ptr);
@@ -80,8 +80,8 @@ class Dealer:TCPUtility{
         void registerThread(int pid, const char* ip, int port);
         void clearUpCachedMessage(int pid);
         void reportReady(int pid, int sockfd);
-        void queueInCommingMessage(Message* msg);
-        void queueOutGoingMessage(Message* msg);
+        void queueInCommingMessage(AbstractMessage* msg);
+        void queueOutGoingMessage(AbstractMessage* msg);
         void processInCommingMessage();
         void processOutGoingMessage();
         void startProcess();
