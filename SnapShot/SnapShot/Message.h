@@ -30,13 +30,14 @@ class Message{
         static const int DELIVERY_ACTION = 2;
         static const int MARKER_ACTION = 3;
         static const int TIME_VECTOR_LENGTH = 256;
-    
+        int _pid;
         int _action;
         unsigned _money;
         unsigned _widgets;
         unsigned _time;
         std::vector<unsigned> _timeVector;
-        Message(unsigned action, char* msg);
+        Message(unsigned action, int pid, char* msg);
+        Message( const Message& other );
         Message();
         std::string toString();
         char* toCharArray();

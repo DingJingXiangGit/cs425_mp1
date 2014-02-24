@@ -26,7 +26,17 @@ Message::Message(){
     _widgets = 0;
     _money = 0;
     _time = 0;
+    _pid = 0;
     _timeVector = std::vector<unsigned>();
+}
+
+Message::Message(const Message& other){
+    _action = other._action;
+    _money = other._money;
+    _time = other._time;
+    _widgets = other._widgets;
+    _pid = other._pid;
+    _timeVector = std::vector<unsigned>(other._timeVector);
 }
 
 void parseTimeVector( vector<unsigned>& timeVector, string& input, string delimiter){
@@ -40,7 +50,7 @@ void parseTimeVector( vector<unsigned>& timeVector, string& input, string delimi
     }
 }
 
-Message::Message(unsigned action, char* msg){
+Message::Message(unsigned action, int pid, char* msg){
     std::string delimiter = ", ";
     if(action == PURCHASE_ACTION || action == DELIVERY_ACTION){
         std::string timeString(msg);
@@ -59,6 +69,7 @@ Message::Message(unsigned action, char* msg){
         _timeVector = std::vector<unsigned>();
         parseTimeVector(_timeVector, timeString, delimiter);
     }
+    _pid = pid;
 }
 
 std::string Message::toString(){

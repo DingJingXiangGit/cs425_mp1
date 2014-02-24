@@ -34,7 +34,7 @@ protected:
 
 class SendThread : TCPUtility{
 public:
-    SendThread(Dealer* parent, int socket);
+    SendThread(Dealer* parent, int pid, int socket);
     int start();
     pthread_t getThread();
 protected:

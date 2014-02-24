@@ -23,25 +23,4 @@ public:
     virtual ~State();
 };
 
-class ProcessState : public State{
-protected:
-    int _processId;
-public:
-    ProcessState(int money, int wdt, int pid);
-    
-    virtual std::string toString();
-    virtual ~ProcessState();
-};
-
-class ChannelState : public State{
-protected:
-    int _source;
-    int _target;
-public:
-    ChannelState(int money, int wdt, int src, int tgt);
-    virtual std::string toString();
-    virtual ~ChannelState();
-};
-
-
 #endif /* defined(__SnapShot__State__) */
