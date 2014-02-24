@@ -12,14 +12,14 @@
 #include <unistd.h>
 using namespace std;
 
-const char* Message::ACK_MSG_FORMAT = "{action:ack, id:%09d, ip:%s, port:%05d}";
-const char* Message::ACK_MSG_PARSE = "{action:%10[^,], id:%d, ip:%15[^,], port:%d}";
-const char* Message::ACTION_HEADER_FORMAT = "action:%04d\r\nlength:%010d\r\n";
-const char* Message::ACTION_HEADER_PARSE = "action:%d\r\nlength:%d\r\n";
-const char* Message::ACTION_MSG_FORMAT = "{money:%05d, widgets:%05, time:%012d, vector:%s}";
-const char* Message::ACTION_MSG_PARSE = "{money:%d, widgets:%d, time:%d}";
-const char* Message::ACTION_MARKER_PARSE = "{time:%d}";
-const char* Message::ACTION_MARKER = "{time:%012d, vector:%s}";
+const char* AbstractMessage::ACK_MSG_FORMAT = "{action:ack, id:%09d, ip:%s, port:%05d}";
+const char* AbstractMessage::ACK_MSG_PARSE = "{action:%10[^,], id:%d, ip:%15[^,], port:%d}";
+const char* AbstractMessage::ACTION_HEADER_FORMAT = "action:%04d\r\nlength:%010d\r\n";
+const char* AbstractMessage::ACTION_HEADER_PARSE = "action:%d\r\nlength:%d\r\n";
+const char* AbstractMessage::ACTION_MSG_FORMAT = "{money:%05d, widgets:%05, time:%012d, vector:%s}";
+const char* AbstractMessage::ACTION_MSG_PARSE = "{money:%d, widgets:%d, time:%d}";
+const char* AbstractMessage::ACTION_MARKER_PARSE = "{snapshotId:%d, initiator:%d, time:%d}";
+const char* AbstractMessage::ACTION_MARKER = "{snapshotId:%04d, initiator:%04d, time:%012d, vector:%s}";
 
 Message::Message(){
     _action = PURCHASE_ACTION;
@@ -114,6 +114,39 @@ char* Message::toCharArray(){
     strcpy(result, stringFormat.c_str());
     return result;
 };
+
+
+
+MarkerMessage::MarkerMessage(){
+    _action = MARKER_ACTION;
+};
+
+std::string MarkerMessage::toString(){
+    char buff[ACTION_HEADER_SIZE+1];
+    stringstream ss;
+    ss << "{snapshotId:"<<_snapshotId<<", ";
+    ss << "initiator:"<<_initiator<<", ";
+    ss << "time:"<<setw(12)<<setfill('0')<<_time<<", ";
+    ss << "vector:[";
+    for(int i = 0; i < _timeVector.size(); ++i){
+        ss<<_timeVector[i]<<", ";
+    }
+    ss << "]}";
+    string content = ss.str();
+    sprintf(buff, ACTION_HEADER_FORMAT, _action, content.size());
+    ss.str("");
+    ss<<buff<<content;
+    return ss.str();
+}
+
+char* MarkerMessage::toCharArray(){
+    std::string stringFormat = toString();
+    size_t size =  stringFormat.size();
+    char* result = new char[size + 1];
+    strcpy(result, stringFormat.c_str());
+    return result;
+}
+
 
 
 const char* InitMessage::INIT_MESSAGE_FORMAT = "{id:%09d, ip:%s, port:%05d}";

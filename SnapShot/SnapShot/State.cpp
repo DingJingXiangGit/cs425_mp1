@@ -13,6 +13,8 @@
 State::State(int money, int wdt){
     _widgets = wdt;
     _money = money;
+    _time = 0;
+    _timeVector = std::vector<unsigned>();
 };
 
 std::string State::toString(){
@@ -27,5 +29,26 @@ std::string State::toString(){
     return copyOfStr;
 };
 
+State::State(const State& state){
+    _time = state._time;
+    _money = state._money;
+    _widgets = state._widgets;
+    _timeVector = std::vector<unsigned>(state._timeVector);
+};
+
 State::~State(){
+};
+
+
+ChannelState::ChannelState(int money, int wdt, unsigned time, std::vector<unsigned>& timeVector, unsigned src, unsigned dest):State(money, wdt){
+    _money = money;
+    _widgets = wdt;
+    _time = time;
+    _timeVector = std::vector<unsigned>(timeVector);
+    _source = src;
+    _destination = dest;
+    
+};
+ChannelState::~ChannelState(){
+
 };

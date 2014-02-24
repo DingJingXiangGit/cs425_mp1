@@ -6,17 +6,18 @@ Dealer::Dealer(Peer* selfInfo, PeerTable* peerTable){
     _selfInfo = selfInfo;
     _peerTable = peerTable;
     _state = new State(DEFAULT_MONEY, DEFAULT_WIDGETS);
-    //new ProcessState(DEFAULT_MONEY, DEFAULT_WIDGETS, _selfInfo->_id);
-    _time = 0;
-    _timeVector = std::vector<unsigned>(_peerTable->size() + 1);
+    _state->_timeVector = std::vector<unsigned>(_peerTable->size() + 1);
+    
+    //_time = 0;
+    //_timeVector = std::vector<unsigned>(_peerTable->size() + 1);
+    
     _inSemName = std::string("in semaphore");
     _inSemName += _selfInfo->_id;
     _outSemName = std::string("out semaphore");
     _outSemName += _selfInfo->_id;
-    
     _inMessageSem = sem_open(_inSemName.c_str(), O_CREAT, 0600, 0);
     _outMessageSem = sem_open(_outSemName.c_str(), O_CREAT, 0600, 0);
-    if(_inMessageSem == SEM_FAILED) {
+    if(_inMessageSem == SEM_FAILED || _outMessageSem == SEM_FAILED) {
         perror("parent sem_open");
         exit(-1);
     }
@@ -103,7 +104,7 @@ void Dealer::connectPeers(){
         std::cout<<peer->_ip<<":"<<peer->_port<< " connection setup completed." << std::endl;
     }
     std::cout<< "Outgoing connection setup completed." << std::endl;
-}
+};
 
 void* Dealer::startListenThread(void* ptr){
     Dealer* thisPtr = (Dealer*)ptr;
@@ -130,6 +131,9 @@ int  Dealer::startConnect(){
 void Dealer::join(){
     pthread_join(_listenThread, NULL);
     pthread_join(_connectThread, NULL);
+    pthread_join(_inProcessThread, NULL);
+    pthread_join(_outProcessThread, NULL);
+    
     for (InThreadList::iterator it = _inThreads.begin(); it != _inThreads.end(); ++it){
         pthread_join((*it)->getThread(), NULL);
     }
@@ -210,41 +214,49 @@ void Dealer::processInCommingMessage(){
             _inMessageQueue.pop_front();
         }
         pthread_mutex_unlock(&_inMutex);
-        if(msg->_time > _time){
-            _time = std::max(_time, msg->_time);
-        }
-        for(int i = 0; i < _timeVector.size(); ++i){
-            if(i != _selfInfo->_id){
-                _timeVector[i] = std::max(_timeVector[i], msg->_timeVector[i]);
+        
+        pthread_mutex_lock(&_updateMutex);
+        {
+            if(msg->_time > _state->_time){
+                _state->_time = std::max(_state->_time, msg->_time);
             }
+            for(int i = 0; i < _state->_timeVector.size(); ++i){
+                if(i != _selfInfo->_id){
+                    _state->_timeVector[i] = std::max(_state->_timeVector[i], msg->_timeVector[i]);
+                }
+            }
+            _state->_time += 1;
+            _state->_timeVector[_selfInfo->_id] += 1;
+            if (msg->_action == AbstractMessage::PURCHASE_ACTION) {
+                _state->_money += msg->_money;
+            }else if(msg->_action == AbstractMessage::DELIVERY_ACTION){
+                _state->_widgets += msg->_widgets;
+            }
+            
         }
-        _time += 1;
-        _timeVector[_selfInfo->_id] += 1;
-        if (msg->_action == Message::PURCHASE_ACTION) {
-            _state->_money += msg->_money;
-        }else if(msg->_action == Message::DELIVERY_ACTION){
-            _state->_widgets += msg->_widgets;
-        }
+        pthread_mutex_unlock(&_updateMutex);
+
         pthread_mutex_lock(&_printMutex);
         {
             std::cout<<"receive action: "<<msg->_action<<std::endl;
-            if(msg->_action == Message::PURCHASE_ACTION){
-                std::cout<<"receive event: order money="<<_state->_money<<" widgets="<<_state->_widgets<<" time="<<_time <<", time vector = "<<timeVectorToStr(_timeVector)<<std::endl;
+            if(msg->_action == AbstractMessage::PURCHASE_ACTION){
+                std::cout<<"receive event: order money="<<_state->_money<<" widgets="<<_state->_widgets<<" time="<<_state->_time <<", time vector = "<<timeVectorToStr(_state->_timeVector)<<std::endl;
                     printf("receive order message from %d:<%d, %d, %d, %s>\n",msg->_pid, msg->_money, msg->_widgets, msg->_time, timeVectorToStr(msg->_timeVector).c_str());
-            }else if(msg->_action == Message::DELIVERY_ACTION){
-                std::cout<<"receive event: delivery money="<<_state->_money<<" widgets="<<_state->_widgets<<" time="<<_time <<", time vector = "<<timeVectorToStr(_timeVector)<<std::endl;
+            }else if(msg->_action == AbstractMessage::DELIVERY_ACTION){
+                std::cout<<"receive event: delivery money="<<_state->_money<<" widgets="<<_state->_widgets<<" time="<<_state->_time <<", time vector = "<<timeVectorToStr(_state->_timeVector)<<std::endl;
                 printf("receive delivery message from %d:<%d, %d, %d, %s>\n",msg->_pid, msg->_money, msg->_widgets, msg->_time, timeVectorToStr(msg->_timeVector).c_str());
             }
         }
         pthread_mutex_unlock(&_printMutex);
-        if (msg->_action == Message::PURCHASE_ACTION) {
+        
+        if (msg->_action == AbstractMessage::PURCHASE_ACTION) {
             Message* response = new Message();
-            response->_action = Message::DELIVERY_ACTION;
+            response->_action = AbstractMessage::DELIVERY_ACTION;
             response->_money = 0;
             response->_widgets = msg->_widgets;
             response->_pid = msg->_pid;
             queueOutGoingMessage(response);
-        }else if(msg->_action == Message::MARKER_ACTION){
+        }else if(msg->_action == AbstractMessage::MARKER_ACTION){
             saveState();
             std::cout<<__FILE__<<"@"<<__LINE__<<"[DEBUG]: "<<"record marker\n";
         }
@@ -274,23 +286,25 @@ void Dealer::processOutGoingMessage(){
         }
         pthread_mutex_unlock(&_checkMutex);
         
-        _time += 1;
-        _timeVector[_selfInfo->_id] += 1;
-        if(msg->_action == Message::PURCHASE_ACTION){
+        pthread_mutex_lock(&_updateMutex);
+        _state->_time += 1;
+        _state->_timeVector[_selfInfo->_id] += 1;
+        if(msg->_action == AbstractMessage::PURCHASE_ACTION){
             _state->_money -= msg->_money;
-        }else if(msg->_action == Message::DELIVERY_ACTION){
+        }else if(msg->_action == AbstractMessage::DELIVERY_ACTION){
             _state->_widgets -= msg->_widgets;
         }
-        msg->_time = _time;
-        msg->_timeVector = _timeVector;
-        
+        msg->_time = _state->_time;
+        msg->_timeVector = _state->_timeVector;
+        pthread_mutex_unlock(&_updateMutex);
+
         pthread_mutex_lock(&_printMutex);
         {
-            if(msg->_action == Message::PURCHASE_ACTION){
-                std::cout<<"send event: order money="<<_state->_money<<" widgets="<<_state->_widgets<<" time="<<_time <<", time vector = "<<timeVectorToStr(_timeVector)<<std::endl;
+            if(msg->_action == AbstractMessage::PURCHASE_ACTION){
+                std::cout<<"send event: order money="<<_state->_money<<" widgets="<<_state->_widgets<<" time="<<_state->_time <<", time vector = "<<timeVectorToStr(_state->_timeVector)<<std::endl;
                 printf("send order message to %d:<%d, %d, %d, %s>\n",msg->_pid, msg->_money, msg->_widgets, msg->_time, timeVectorToStr(msg->_timeVector).c_str());
-            }else if(msg->_action == Message::DELIVERY_ACTION){
-                std::cout<<"send event: delivery money="<<_state->_money<<" widgets="<<_state->_widgets<<" time="<<_time <<", time vector = "<<timeVectorToStr(_timeVector)<<std::endl;
+            }else if(msg->_action == AbstractMessage::DELIVERY_ACTION){
+                std::cout<<"send event: delivery money="<<_state->_money<<" widgets="<<_state->_widgets<<" time="<<_state->_time <<", time vector = "<<timeVectorToStr(_state->_timeVector)<<std::endl;
                 printf("send delivery message to %d:<%d, %d, %d, %s>\n",msg->_pid, msg->_money, msg->_widgets, msg->_time, timeVectorToStr(msg->_timeVector).c_str());
             }
             std::cout<<"socket status => "<<_socketTable[msg->_pid]<<std::endl;
@@ -300,6 +314,34 @@ void Dealer::processOutGoingMessage(){
         char* buffer = msg->toCharArray();
         tcpWrite(_socketTable[msg->_pid], buffer, (int)strlen(buffer));
         delete buffer;
+        
+        unsigned decision = (rand() % 100);
+        if(decision <= 10){
+            std::cout << "Start SnapShot" << std::endl;
+            unsigned initiator = _selfInfo->_id;
+            unsigned snapshotId = static_cast<unsigned>(_snapshotTable[initiator].size()) + 1;
+            unsigned num = static_cast<unsigned>(_peerTable->size());
+            MarkerMessage marker;
+            char* buffer;
+            SnapShot* snapshot = new SnapShot(initiator, snapshotId, *_state, num);
+            pthread_mutex_lock(&_updateMutex);
+            {
+                _snapshotTable[initiator][snapshotId] = snapshot;
+                marker._snapshotId = snapshotId;
+                marker._initiator = initiator;
+                
+                for (SocketTable::iterator it = _socketTable.begin(); it != _socketTable.end(); ++it) {
+                    _state->_time += 1;
+                    _state->_timeVector[_selfInfo->_id] += 1;
+                    marker._time = _state->_time;
+                    marker._timeVector = _state->_timeVector;
+                    buffer = marker.toCharArray();
+                    tcpWrite(it->second, buffer, (int)strlen(buffer));
+                    delete buffer;
+                }
+            }
+            pthread_mutex_unlock(&_updateMutex);
+        }
     }
 }
 

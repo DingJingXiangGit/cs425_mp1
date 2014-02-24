@@ -5,6 +5,7 @@
 #include "Peer.h"
 #include "Message.h"
 #include "Utility.h"
+#include "SnapShot.h"
 
 #include <map>
 #include <list>
@@ -25,10 +26,10 @@ class ReceiveThread;
 class SendThread;
 typedef std::list<ReceiveThread*> InThreadList;
 typedef std::list<SendThread*> OutThreadList;
-
 typedef std::map<int, Peer*> PeerTable;
 typedef std::map<int, int> SocketTable;
 typedef std::map<int, std::vector<Message*> > MessageStore;
+typedef std::map<unsigned, std::map<unsigned, SnapShot*> > SnapShotTable;
 class Dealer:TCPUtility{
     private:
         const unsigned MAX_QUEUE_SIZE = 100;
@@ -39,14 +40,16 @@ class Dealer:TCPUtility{
         pthread_mutex_t _outMutex = PTHREAD_MUTEX_INITIALIZER;
         pthread_mutex_t _checkMutex = PTHREAD_MUTEX_INITIALIZER;
         pthread_mutex_t _printMutex = PTHREAD_MUTEX_INITIALIZER;
-
+        pthread_mutex_t _updateMutex = PTHREAD_MUTEX_INITIALIZER;
+    
         sem_t* _inMessageSem;
         sem_t* _outMessageSem;
         std::string _inSemName;
         std::string _outSemName;
-        int _port;
-        unsigned _time;
-        std::vector<unsigned> _timeVector;
+        //int _port;
+        //unsigned _time;
+        //std::vector<unsigned> _timeVector;
+    
         State* _state;
         Peer* _selfInfo;
         PeerTable* _peerTable;
@@ -59,10 +62,10 @@ class Dealer:TCPUtility{
         pthread_t _outProcessThread;
     
         SocketTable _socketTable;
-
         InThreadList _inThreads;
         OutThreadList _outThreads;
         MessageStore _messageStore;
+        SnapShotTable _snapshotTable;
 
         void waitForPeers();
         void connectPeers();
@@ -76,17 +79,13 @@ class Dealer:TCPUtility{
         int startConnect();
         void registerThread(int pid, const char* ip, int port);
         void clearUpCachedMessage(int pid);
-    /*
-        void sendMessage(int pid, Message& msg);
-        void execute(int pid, Message& msg);
-        void clearUpCachedMessage(int pid);
-     */
         void reportReady(int pid, int sockfd);
         void queueInCommingMessage(Message* msg);
         void queueOutGoingMessage(Message* msg);
         void processInCommingMessage();
         void processOutGoingMessage();
         void startProcess();
+    
         void saveState();
         void join();
         Peer* getSelfInfo();

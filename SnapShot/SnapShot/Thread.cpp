@@ -39,15 +39,15 @@ void ReceiveThread::setup(){
 };
 
 void ReceiveThread::execute(){
-    char header[Message::ACTION_HEADER_SIZE + 1];
+    char header[AbstractMessage::ACTION_HEADER_SIZE + 1];
     memset(header, 0 , sizeof(header));
     while(true){
         //std::cout << "ReceiveThread execute [start]"<<std::endl;
         try{
-        if(tcpRead(_socket, header, Message::ACTION_HEADER_SIZE)){
+        if(tcpRead(_socket, header, AbstractMessage::ACTION_HEADER_SIZE)){
             unsigned size = 0;
             unsigned action = 0;
-            sscanf(header, Message::ACTION_HEADER_PARSE, &action, &size);
+            sscanf(header, AbstractMessage::ACTION_HEADER_PARSE, &action, &size);
             char content[size + 1];
             memset(content, 0 , sizeof(content));
             //std::cout<<"tcp read header finished."<<std::endl;
@@ -116,7 +116,7 @@ void SendThread::execute(){
             unsigned money = (rand() % 10)*10;
             unsigned widget = money / 10 ;
             Message* message = new Message();
-            message->_action = Message::PURCHASE_ACTION;
+            message->_action = AbstractMessage::PURCHASE_ACTION;
             message->_money = money;
             message->_widgets = widget;
             message->_pid = _pid;

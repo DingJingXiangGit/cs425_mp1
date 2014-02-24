@@ -14,6 +14,7 @@
 		90DBA9D018B0260B0062535B /* State.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90DBA9CE18B0260B0062535B /* State.cpp */; };
 		90DBA9D318B06C530062535B /* Peer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90DBA9D118B06C530062535B /* Peer.cpp */; };
 		90DBA9DA18B714620062535B /* Message.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90DBA9D818B714620062535B /* Message.cpp */; };
+		90DBA9DD18BB0E8F0062535B /* SnapShot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90DBA9DB18BB0E8F0062535B /* SnapShot.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -44,6 +45,8 @@
 		90DBA9D718B30B130062535B /* Utility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Utility.h; sourceTree = "<group>"; };
 		90DBA9D818B714620062535B /* Message.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Message.cpp; sourceTree = "<group>"; };
 		90DBA9D918B714620062535B /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
+		90DBA9DB18BB0E8F0062535B /* SnapShot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SnapShot.cpp; sourceTree = "<group>"; };
+		90DBA9DC18BB0E8F0062535B /* SnapShot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnapShot.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,6 +92,8 @@
 				90DBA9D718B30B130062535B /* Utility.h */,
 				90DBA9D818B714620062535B /* Message.cpp */,
 				90DBA9D918B714620062535B /* Message.h */,
+				90DBA9DB18BB0E8F0062535B /* SnapShot.cpp */,
+				90DBA9DC18BB0E8F0062535B /* SnapShot.h */,
 			);
 			path = SnapShot;
 			sourceTree = "<group>";
@@ -147,6 +152,7 @@
 				90DBA9CA18B0249E0062535B /* Dealer.cpp in Sources */,
 				90DBA9BF18B024430062535B /* main.cpp in Sources */,
 				90DBA9CD18B024B40062535B /* Thread.cpp in Sources */,
+				90DBA9DD18BB0E8F0062535B /* SnapShot.cpp in Sources */,
 				90DBA9D018B0260B0062535B /* State.cpp in Sources */,
 				90DBA9D318B06C530062535B /* Peer.cpp in Sources */,
 				90DBA9DA18B714620062535B /* Message.cpp in Sources */,

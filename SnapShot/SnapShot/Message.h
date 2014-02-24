@@ -11,25 +11,27 @@
 
 #include <iostream>
 #include <vector>
-class Message{
-    const char* PURCHASE = "purchase";
-    const char* DELIVERY = "delivery";
-    const char* MARKER = "marker";
-    public:
-        static const unsigned ACTION_HEADER_SIZE = 32;
-        static const char* ACK_MSG_FORMAT;
-        static const char* ACK_MSG_PARSE;
-        static const char* ACTION_HEADER_FORMAT;
-        static const char* ACTION_HEADER_PARSE;
-        static const char* ACTION_MSG_FORMAT;
-        static const char* ACTION_MSG_PARSE;
-        static const char* ACTION_MARKER_PARSE;
-        static const char* ACTION_MARKER;
 
-        static const int PURCHASE_ACTION = 1;
-        static const int DELIVERY_ACTION = 2;
-        static const int MARKER_ACTION = 3;
-        static const int TIME_VECTOR_LENGTH = 256;
+class AbstractMessage{
+public:
+    static const unsigned ACTION_HEADER_SIZE = 32;
+    static const char* ACK_MSG_FORMAT;
+    static const char* ACK_MSG_PARSE;
+    static const char* ACTION_HEADER_FORMAT;
+    static const char* ACTION_HEADER_PARSE;
+    static const char* ACTION_MSG_FORMAT;
+    static const char* ACTION_MSG_PARSE;
+    static const char* ACTION_MARKER_PARSE;
+    static const char* ACTION_MARKER;
+    
+    static const int PURCHASE_ACTION = 1;
+    static const int DELIVERY_ACTION = 2;
+    static const int MARKER_ACTION = 3;
+    static const int TIME_VECTOR_LENGTH = 256;
+};
+
+class Message : AbstractMessage{
+    public:
         int _pid;
         int _action;
         unsigned _money;
@@ -37,10 +39,25 @@ class Message{
         unsigned _time;
         std::vector<unsigned> _timeVector;
         Message(unsigned action, int pid, char* msg);
-        Message( const Message& other );
+        Message(const Message& other );
         Message();
         std::string toString();
         char* toCharArray();
+};
+
+class MarkerMessage : AbstractMessage{
+public:
+    static const char* ACTION_MARKER_PARSE;
+    static const char* ACTION_MARKER;
+    int _pid;
+    int _action;
+    unsigned _time;
+    unsigned _snapshotId;
+    unsigned _initiator;
+    std::vector<unsigned> _timeVector;
+    MarkerMessage();
+    std::string toString();
+    char* toCharArray();
 };
 
 class InitMessage{
@@ -52,4 +69,5 @@ public:
     static const unsigned INIT_MESSAGE_SIZE = 72;
     static char* toCharArray(int pid, const char* ip, int port);
 };
+
 #endif /* defined(__SnapShot__Message__) */
