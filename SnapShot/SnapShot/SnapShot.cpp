@@ -35,6 +35,7 @@ void SnapShot::recordChannelState(Message* message){
     unsigned dest = _initiator;
     ChannelState* channelState = new ChannelState(money,widget,time, message->_timeVector,source, dest);
     _channelStates[source].push_back(channelState);
+    std::cout<<"logical "<<time<<" record channel state: "<<money <<", "<<widget << " from "<<source<<" to "<<dest<<std::endl;
 };
 
 void SnapShot::save(unsigned pid){

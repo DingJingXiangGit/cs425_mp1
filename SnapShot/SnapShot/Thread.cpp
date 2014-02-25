@@ -42,7 +42,6 @@ void ReceiveThread::execute(){
     char header[AbstractMessage::ACTION_HEADER_SIZE + 1];
     memset(header, 0 , sizeof(header));
     while(true){
-        //std::cout << "ReceiveThread execute [start]"<<std::endl;
         try{
         if(tcpRead(_socket, header, AbstractMessage::ACTION_HEADER_SIZE)){
             unsigned size = 0;
@@ -65,7 +64,6 @@ void ReceiveThread::execute(){
             std::cout << e.what() << '\n';
             exit(-1);
         }
-        //std::cout << "ReceiveThread execute [start]"<<std::endl;
     }
 };
 
@@ -78,8 +76,6 @@ int ReceiveThread::run(){
 pthread_t ReceiveThread::getThread(){
     return _thread;
 };
-
-
 
 SendThread::SendThread(Dealer* parent, int pid, int socket){
     _parent = parent;
