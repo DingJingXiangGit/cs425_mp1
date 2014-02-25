@@ -50,7 +50,6 @@ void ReceiveThread::execute(){
             sscanf(header, AbstractMessage::ACTION_HEADER_PARSE, &action, &size);
             char content[size + 1];
             memset(content, 0 , sizeof(content));
-            //std::cout<<content<<std::endl;
             if(tcpRead(_socket, content, size)){
                 AbstractMessage* message = NULL;
                 if(action == AbstractMessage::DELIVERY_ACTION){
@@ -104,7 +103,7 @@ void SendThread::setup(){
     char* message = InitMessage::toCharArray(selfInfo->_id, selfInfo->_ip.c_str(), selfInfo->_port);
     tcpWrite(_socket, message, (int)strlen(message));
     _parent->reportReady(_pid, _socket);
-    _parent->clearUpCachedMessage(_pid);
+    //_parent->clearUpCachedMessage(_pid);
     std::cout<<__FILE__<<"@"<<__LINE__<<"[DEBUG]: "<<"socket: "<<_socket<<" send msg: "<<message<<std::endl;
     delete message;
 };

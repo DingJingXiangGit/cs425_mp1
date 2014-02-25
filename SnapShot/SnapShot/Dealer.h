@@ -35,10 +35,10 @@ class Dealer:TCPUtility{
         const unsigned MAX_QUEUE_SIZE = 100;
         const unsigned DEFAULT_MONEY = 10000;
         const unsigned DEFAULT_WIDGETS = 10000;
-
+    
+        //pthread_mutex_t _checkMutex = PTHREAD_MUTEX_INITIALIZER;
         pthread_mutex_t _inMutex = PTHREAD_MUTEX_INITIALIZER;
         pthread_mutex_t _outMutex = PTHREAD_MUTEX_INITIALIZER;
-        pthread_mutex_t _checkMutex = PTHREAD_MUTEX_INITIALIZER;
         pthread_mutex_t _printMutex = PTHREAD_MUTEX_INITIALIZER;
         pthread_mutex_t _updateMutex = PTHREAD_MUTEX_INITIALIZER;
     
@@ -68,7 +68,6 @@ class Dealer:TCPUtility{
     
         void waitForPeers();
         void connectPeers();
-        unsigned getActiveNumberOfMembers();
         static void* startListenThread(void* ptr);
         static void* startConnectThread(void* ptr);
         static void* startInCommingMessageThread(void* ptr);
@@ -78,14 +77,15 @@ class Dealer:TCPUtility{
         int startListen();
         int startConnect();
         void registerThread(int pid, const char* ip, int port);
-        void clearUpCachedMessage(int pid);
-        void reportReady(int pid, int sockfd);
+
+    
         void queueInCommingMessage(AbstractMessage* msg);
         void queueOutGoingMessage(AbstractMessage* msg);
         void processInCommingMessage();
         void processOutGoingMessage();
         void startProcess();
-    
+        //void clearUpCachedMessage(int pid);
+        void reportReady(int pid, int sockfd);
         void join();
         Peer* getSelfInfo();
         ~Dealer();

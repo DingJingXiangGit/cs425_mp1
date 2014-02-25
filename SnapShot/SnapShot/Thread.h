@@ -21,12 +21,12 @@ public:
     ReceiveThread(Dealer* parent, int socket);
     int start();
     pthread_t getThread();
+    virtual void setup();
+    virtual void execute();
 protected:
     int _pid;
     int run();
     static void* entryPoint(void* arg);
-    virtual void setup();
-    virtual void execute();
     int _socket;
     Dealer* _parent;
     pthread_t _thread;
@@ -37,12 +37,12 @@ public:
     SendThread(Dealer* parent, int pid, int socket);
     int start();
     pthread_t getThread();
+    virtual void setup();
+    virtual void execute();
 protected:
     int _pid;
     int run();
     static void* entryPoint(void* arg);
-    virtual void setup();
-    virtual void execute();
     int _socket;
     Dealer* _parent;
     pthread_t _thread;

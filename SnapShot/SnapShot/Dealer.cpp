@@ -78,9 +78,8 @@ void Dealer::connectPeers(){
     for (PeerTable::iterator it = _peerTable->begin(); it != _peerTable->end(); ++it){
         Peer* peer = it->second;
         portno = peer->_port;
-        std::cout<<"start connecting to "<<peer->_ip<<":"<<peer->_port<<std::endl;
-        int i = 1;
-        while(i <= 30){
+        std::cout << "start connecting to " << peer->_ip << ":" << peer->_port << std::endl;
+        while(true){
             sockfd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
             if (-1 == sockfd){
                 perror("cannot create socket");
@@ -96,12 +95,11 @@ void Dealer::connectPeers(){
                 break;
             }
             close(sockfd);
-            sleep(++i);
+            sleep(1);
         }
         SendThread* thread = new SendThread(this, peer->_id, sockfd);
-        thread->start();
         _outThreads.push_back(thread);
-        std::cout<<peer->_ip<<":"<<peer->_port<< " connection setup completed." << std::endl;
+        thread->start();
     }
     std::cout<< "Outgoing connection setup completed." << std::endl;
 };
@@ -142,14 +140,14 @@ void Dealer::join(){
         pthread_join((*it)->getThread(), NULL);
     }
 }
+
+
 void Dealer::reportReady(int pid, int sockfd){
-    pthread_mutex_lock(&_checkMutex);
+    //pthread_mutex_lock(&_checkMutex);
     _socketTable[pid] = sockfd;
-    
-    pthread_mutex_unlock(&_checkMutex);
-
+    //pthread_mutex_unlock(&_checkMutex);
 }
-
+/*
 void Dealer::clearUpCachedMessage(int pid){
     pthread_mutex_lock(&_checkMutex);
     std::vector<AbstractMessage*> messages = _messageStore[pid];
@@ -159,6 +157,7 @@ void Dealer::clearUpCachedMessage(int pid){
     messages.clear();
     pthread_mutex_unlock(&_checkMutex);
 }
+*/
 
 
 void Dealer::startProcess(){
@@ -311,6 +310,7 @@ void Dealer::processOutGoingMessage(){
         pthread_mutex_unlock(&_inMutex);
         
         //checking unavailable sockets
+        /*
         pthread_mutex_lock(&_checkMutex);
         if(_socketTable[msg->_pid]==0){
             _messageStore[msg->_pid].push_back(msg);
@@ -318,6 +318,7 @@ void Dealer::processOutGoingMessage(){
             continue;
         }
         pthread_mutex_unlock(&_checkMutex);
+        */
         
         pthread_mutex_lock(&_updateMutex);
             _state->_time += 1;
@@ -346,9 +347,11 @@ void Dealer::processOutGoingMessage(){
         pthread_mutex_unlock(&_printMutex);
         
         pthread_mutex_lock(&_updateMutex);
-        char* buffer = msg->toCharArray();
-        tcpWrite(_socketTable[msg->_pid], buffer, (int)strlen(buffer));
-        delete buffer;
+        {
+            char* buffer = msg->toCharArray();
+            tcpWrite(_socketTable[msg->_pid], buffer, (int)strlen(buffer));
+            delete buffer;
+        }
         pthread_mutex_unlock(&_updateMutex);
         
         unsigned decision = (rand() % 100);
@@ -382,11 +385,6 @@ void Dealer::processOutGoingMessage(){
         }
     }
 }
-
-unsigned Dealer::getActiveNumberOfMembers(){
-    unsigned counter = 0;
-    return counter;
-};
 
 void Dealer::registerThread(int pid, const char* ip, int port){
     
