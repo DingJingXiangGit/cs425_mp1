@@ -28,9 +28,10 @@ int main(int argc, const char* argv[])
     Peer* self = (*peers)[pid];
     peers->erase(pid);
     Dealer* dealer = new Dealer(self, peers);
-    dealer->startProcess();
+
     dealer->startListen();
     dealer->startConnect();
+    dealer->startProcess();
     dealer->join();
     delete peers;
     return 0;

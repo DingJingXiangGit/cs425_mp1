@@ -10,6 +10,7 @@
 #define __SnapShot__SnapShot__
 
 #include <iostream>
+#include <sstream>
 #include <map>
 #include <list>
 #include <string>
@@ -22,15 +23,17 @@ class SnapShot{
 private:
     State* _localState;
     std::map<unsigned, std::list<ChannelState*> > _channelStates;
+    unsigned _counter;
     unsigned _snapshotId;
     unsigned _initiator;
     unsigned _total;
+    
 public:
-
     SnapShot(unsigned initiator, unsigned sid, State& state, int num);
     bool isDone();
     bool ownMarker(MarkerMessage* marker);
-    void save();
+    void save(unsigned pid);
+    void report();
     void recordChannelState(Message* message);
     ~SnapShot();
 };

@@ -25,7 +25,7 @@ AbstractMessage::AbstractMessage(){
 }
 
 Message::Message(){
-    _action = PURCHASE_ACTION;
+    _action = DELIVERY_ACTION;
     _widgets = 0;
     _money = 0;
     _time = 0;
@@ -56,30 +56,16 @@ void parseTimeVector( vector<unsigned>& timeVector, string& input, string delimi
 Message::Message(unsigned action, int pid, char* msg){
     std::string delimiter = ", ";
     _pid = pid;
-    //if(action == PURCHASE_ACTION || action == DELIVERY_ACTION){
     std::string timeString(msg);
     sscanf(msg, ACTION_MSG_PARSE, &_money, &_widgets, &_time);
     timeString = timeString.substr(timeString.find("[") + 1, timeString.find("]") - timeString.find("[") - 1);
     _action = action;
     _timeVector = std::vector<unsigned>();
     parseTimeVector(_timeVector, timeString, delimiter);
-    /*
-    }else{
-        std::string timeString(msg);
-        sscanf(msg, ACTION_MARKER_PARSE, &_time);
-        timeString = timeString.substr(timeString.find("[") + 1, timeString.find("]") - timeString.find("[") - 1);
-        _action = action;
-        _widgets = 0;
-        _money = 0;
-        _timeVector = std::vector<unsigned>();
-        parseTimeVector(_timeVector, timeString, delimiter);
-    }*/
-    
 }
 
 std::string Message::toString(){
     using namespace std;
-    //if(_action == PURCHASE_ACTION||_action == DELIVERY_ACTION){
     char buff[ACTION_HEADER_SIZE+1];
     stringstream ss;
     ss << "{money:"<<setw(5)<<setfill('0')<<_money<<", ";
@@ -95,23 +81,6 @@ std::string Message::toString(){
     ss.str("");
     ss<<buff<<content;
     return ss.str();
-    // }
-    
-    /*else{
-        char buff[ACTION_HEADER_SIZE+1];
-        stringstream ss;
-        ss << "{time:"<<setw(12)<<setfill('0')<<_time<<", ";
-        ss << "vector:[";
-        for(int i = 0; i < _timeVector.size(); ++i){
-            ss<<_timeVector[i]<<", ";
-        }
-        ss << "]}";
-        string content = ss.str();
-        sprintf(buff, ACTION_HEADER_FORMAT, _action, content.size());
-        ss.str("");
-        ss<<buff<<content;
-        return ss.str();
-    }*/
 };
 
 char* Message::toCharArray(){
@@ -175,10 +144,6 @@ char* MarkerMessage::toCharArray(){
 }
 
 
-
-
-
-
 const char* InitMessage::INIT_MESSAGE_FORMAT = "{id:%09d, ip:%s, port:%05d}";
 const char* InitMessage::INIT_HEADER_FORMAT = "action:0000\r\nlength:%010d\r\n";
 const char* InitMessage::INIT_MESSAGE_PARSE = "action:%d\r\nlength:%d\r\n{id:%d, ip:%15[^,], port:%d}";
@@ -197,4 +162,3 @@ char* InitMessage::toCharArray(int pid, const char* ip, int port){
     std::cout << "send init message => "<<ss.str()<<std::endl;
     return result;
 };
-

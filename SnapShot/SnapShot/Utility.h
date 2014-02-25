@@ -22,7 +22,7 @@ protected:
      */
  
     
-    static const unsigned SLEEP_TIME = 5;
+    static const unsigned SLEEP_TIME = 0.01;
     static const unsigned RANDOM_SEED = 100;
     ssize_t tcpRead(int socket, char* buffer, unsigned total){
         char* pBuff = buffer;

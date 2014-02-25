@@ -50,18 +50,15 @@ void ReceiveThread::execute(){
             sscanf(header, AbstractMessage::ACTION_HEADER_PARSE, &action, &size);
             char content[size + 1];
             memset(content, 0 , sizeof(content));
-            //std::cout<<"tcp read header finished."<<std::endl;
+            //std::cout<<content<<std::endl;
             if(tcpRead(_socket, content, size)){
                 AbstractMessage* message = NULL;
-                if(action == AbstractMessage::PURCHASE_ACTION || action == AbstractMessage::DELIVERY_ACTION){
+                if(action == AbstractMessage::DELIVERY_ACTION){
                     message = new Message(action, _pid, content);
                 }else{
                     message = new MarkerMessage(action, _pid, content);
                 }
-                
-                //std::cout<<"tcp read content finished."<<std::endl;
                 _parent->queueInCommingMessage(message);
-                //std::cout<<message->toString()<<std::endl;
             }
         }
         }catch(std::exception& e){
@@ -108,10 +105,10 @@ void SendThread::setup(){
     tcpWrite(_socket, message, (int)strlen(message));
     _parent->reportReady(_pid, _socket);
     _parent->clearUpCachedMessage(_pid);
-    delete message;
     std::cout<<__FILE__<<"@"<<__LINE__<<"[DEBUG]: "<<"socket: "<<_socket<<" send msg: "<<message<<std::endl;
+    delete message;
 };
-
+int x = 0;
 void SendThread::execute(){
     while(true){
         //std::cout << "SendThread execute [start]"<<std::endl;
@@ -122,7 +119,7 @@ void SendThread::execute(){
             unsigned money = (rand() % 10)*10;
             unsigned widget = money / 10 ;
             Message* message = new Message();
-            message->_action = AbstractMessage::PURCHASE_ACTION;
+            message->_action =  AbstractMessage::DELIVERY_ACTION;
             message->_money = money;
             message->_widgets = widget;
             message->_pid = _pid;

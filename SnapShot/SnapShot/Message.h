@@ -24,9 +24,9 @@ public:
     static const char* ACTION_MARKER_PARSE;
     static const char* ACTION_MARKER;
     
-    static const int PURCHASE_ACTION = 1;
-    static const int DELIVERY_ACTION = 2;
-    static const int MARKER_ACTION = 3;
+    //static const int PURCHASE_ACTION = 1;
+    static const int DELIVERY_ACTION = 1;
+    static const int MARKER_ACTION = 2;
     static const int TIME_VECTOR_LENGTH = 256;
     AbstractMessage();
     int _action;

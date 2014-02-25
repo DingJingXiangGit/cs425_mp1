@@ -47,7 +47,6 @@ class Dealer:TCPUtility{
         std::string _inSemName;
         std::string _outSemName;
 
-    
         State* _state;
         Peer* _selfInfo;
         PeerTable* _peerTable;
@@ -69,6 +68,7 @@ class Dealer:TCPUtility{
     
         void waitForPeers();
         void connectPeers();
+        unsigned getActiveNumberOfMembers();
         static void* startListenThread(void* ptr);
         static void* startConnectThread(void* ptr);
         static void* startInCommingMessageThread(void* ptr);
@@ -86,7 +86,6 @@ class Dealer:TCPUtility{
         void processOutGoingMessage();
         void startProcess();
     
-        void saveState();
         void join();
         Peer* getSelfInfo();
         ~Dealer();
