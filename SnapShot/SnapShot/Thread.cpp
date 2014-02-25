@@ -108,38 +108,26 @@ void SendThread::setup(){
     std::cout<<__FILE__<<"@"<<__LINE__<<"[DEBUG]: "<<"socket: "<<_socket<<" send msg: "<<message<<std::endl;
     delete message;
 };
-int x = 0;
+
 void SendThread::execute(){
     while(true){
-        //std::cout << "SendThread execute [start]"<<std::endl;
         sleep(SLEEP_TIME);
         try{
-        unsigned decision = (rand() % 100);
-        if(decision <= 80){
-            unsigned money = (rand() % 10)*10;
-            unsigned widget = money / 10 ;
-            Message* message = new Message();
-            message->_action =  AbstractMessage::DELIVERY_ACTION;
-            message->_money = money;
-            message->_widgets = widget;
-            message->_pid = _pid;
-            _parent->queueOutGoingMessage(message);
-        }else{
-            //MARKER
-            /*
-            Message message;
-            message._action = Message::MARKER_ACTION;
-            message._money = 0;
-            message._widgets = 0;
-            _parent->sendMessage(_pid, message);
-             */
-        }
+            unsigned decision = (rand() % 100);
+            if(decision <= 80){
+                unsigned money = (rand() % 10)*10;
+                unsigned widget = money / 10 ;
+                Message* message = new Message();
+                message->_action =  AbstractMessage::DELIVERY_ACTION;
+                message->_money = money;
+                message->_widgets = widget;
+                message->_pid = _pid;
+                _parent->queueOutGoingMessage(message);
+            }
         }catch(std::exception& e){
             std::cout<<"\n"<<__FILE__<<"@"<<__LINE__<<"[DEBUG]: "<<"!!!!!!!!!!error occurs !!!!!!!!!!!!!!!!!\n";
             std::cout << e.what() << '\n';
-            exit(-1);
         }
-        //std::cout << "SendThread execute [end]"<<std::endl;
     }
 };
 

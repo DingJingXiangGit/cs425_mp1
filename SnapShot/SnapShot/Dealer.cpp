@@ -360,7 +360,6 @@ void Dealer::processOutGoingMessage(){
             MarkerMessage marker;
             char* buffer;
             
-            //BUG
             SnapShot* snapshot = new SnapShot(initiator, snapshotId, *_state, num);
             pthread_mutex_lock(&_updateMutex);
             {
@@ -388,8 +387,6 @@ unsigned Dealer::getActiveNumberOfMembers(){
     unsigned counter = 0;
     return counter;
 };
-
-
 
 void Dealer::registerThread(int pid, const char* ip, int port){
     
