@@ -31,7 +31,7 @@ protected:
     Dealer* _parent;
     pthread_t _thread;
 };
-
+/*
 class SendThread : TCPUtility{
 public:
     SendThread(Dealer* parent, int pid, int socket);
@@ -47,7 +47,7 @@ protected:
     Dealer* _parent;
     pthread_t _thread;
 };
-
+*/
 
 
 

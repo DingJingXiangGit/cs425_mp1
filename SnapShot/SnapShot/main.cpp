@@ -15,8 +15,6 @@ int main(int argc, const char* argv[])
 {
 
     // insert code here...
-    //"/Users/Virtue/Courses/CS425/cs425_mp1/peer_list"
-
     int pid = atoi(argv[1]);
     const char* peerFile = argv[2];
     std::cout << "Process ID is " << pid << endl;
@@ -27,7 +25,7 @@ int main(int argc, const char* argv[])
     }
     Peer* self = (*peers)[pid];
     peers->erase(pid);
-    Dealer* dealer = new Dealer(self, peers);
+    Dealer* dealer = new Dealer(self, peers, 5);
 
     dealer->startListen();
     dealer->startConnect();

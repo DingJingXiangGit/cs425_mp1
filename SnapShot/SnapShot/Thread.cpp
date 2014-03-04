@@ -43,22 +43,32 @@ void ReceiveThread::execute(){
     memset(header, 0 , sizeof(header));
     while(true){
         try{
-        if(tcpRead(_socket, header, AbstractMessage::ACTION_HEADER_SIZE)){
-            unsigned size = 0;
-            unsigned action = 0;
-            sscanf(header, AbstractMessage::ACTION_HEADER_PARSE, &action, &size);
-            char content[size + 1];
-            memset(content, 0 , sizeof(content));
-            if(tcpRead(_socket, content, size)){
-                AbstractMessage* message = NULL;
-                if(action == AbstractMessage::DELIVERY_ACTION){
-                    message = new Message(action, _pid, content);
+            if(tcpRead(_socket, header, AbstractMessage::ACTION_HEADER_SIZE)){
+                unsigned size = 0;
+                unsigned action = 0;
+                sscanf(header, AbstractMessage::ACTION_HEADER_PARSE, &action, &size);
+                char content[size + 1];
+                memset(content, 0 , sizeof(content));
+                if(tcpRead(_socket, content, size)){
+                    AbstractMessage* message = NULL;
+                    if(action == AbstractMessage::DELIVERY_ACTION){
+                        message = new Message(action, _pid, content);
+                    }else{
+                        message = new MarkerMessage(action, _pid, content);
+                    }
+                    _parent->queueInCommingMessage(message);
                 }else{
-                    message = new MarkerMessage(action, _pid, content);
+                    shutdown(_socket, 2);
+                    close(_socket);
+                    return;
                 }
-                _parent->queueInCommingMessage(message);
+                memset(content, 0 , sizeof(content));
+            }else{
+                shutdown(_socket, 2);
+                close(_socket);
+                return;
             }
-        }
+            memset(header, 0 , sizeof(header));
         }catch(std::exception& e){
             std::cout<<"\n"<<__FILE__<<"@"<<__LINE__<<"[DEBUG]: "<<"!!!!!!!!!!error occurs !!!!!!!!!!!!!!!!!\n";
             std::cout << e.what() << '\n';
@@ -76,7 +86,7 @@ int ReceiveThread::run(){
 pthread_t ReceiveThread::getThread(){
     return _thread;
 };
-
+/*
 SendThread::SendThread(Dealer* parent, int pid, int socket){
     _parent = parent;
     _socket = socket;
@@ -99,7 +109,6 @@ void SendThread::setup(){
     char* message = InitMessage::toCharArray(selfInfo->_id, selfInfo->_ip.c_str(), selfInfo->_port);
     tcpWrite(_socket, message, (int)strlen(message));
     _parent->reportReady(_pid, _socket);
-    //_parent->clearUpCachedMessage(_pid);
     std::cout<<__FILE__<<"@"<<__LINE__<<"[DEBUG]: "<<"socket: "<<_socket<<" send msg: "<<message<<std::endl;
     delete message;
 };
@@ -135,3 +144,4 @@ int SendThread::run(){
 pthread_t SendThread::getThread(){
     return _thread;
 };
+*/

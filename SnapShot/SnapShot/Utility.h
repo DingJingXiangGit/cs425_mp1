@@ -22,7 +22,7 @@ protected:
      */
  
     
-    static const unsigned SLEEP_TIME = 0;
+    static const unsigned SLEEP_TIME = 2;
     static const unsigned RANDOM_SEED = 100;
     ssize_t tcpRead(int socket, char* buffer, unsigned total){
         char* pBuff = buffer;
@@ -30,13 +30,11 @@ protected:
         while(byteLeft > 0){
             ssize_t n = read(socket, pBuff, byteLeft);
             if (n < 0){
-                std::cout<<__FILE__<<"@"<<__LINE__<<"[DEBUG]: " <<"ERROR: reading from socket."<<std::endl;
-                exit(-1);
+                //std::cout<<__FILE__<<"@"<<__LINE__<<"[DEBUG]: " <<"ERROR: reading from socket."<<std::endl;
                 return -1;
             }
             if(n == 0){
-                std::cout<<__FILE__<<"@"<<__LINE__<<"[DEBUG]: " <<"Peer shutdown."<<std::endl;
-                exit(-1);
+                //std::cout<<__FILE__<<"@"<<__LINE__<<"[DEBUG]: " <<"Peer shutdown."<<std::endl;
                 return -1;
             }
             pBuff += n;
@@ -51,14 +49,12 @@ protected:
         while(byteLeft > 0){
             ssize_t n = write(socket, pBuff, byteLeft);
             if (n < 0){
-                std::cout <<"ERROR: reading from socket."<<std::endl;
-                exit(-1);
+                //std::cout <<"ERROR: reading from socket."<<std::endl;
                 return -1;
             }
         
             if(n == 0){
-                std::cout <<"Peer shutdown."<<std::endl;
-                exit(-1);
+                //std::cout <<"Peer shutdown."<<std::endl;
                 return -1;
             }
             pBuff += n;

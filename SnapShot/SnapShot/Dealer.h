@@ -25,11 +25,11 @@
 class ReceiveThread;
 class SendThread;
 typedef std::list<ReceiveThread*> InThreadList;
-typedef std::list<SendThread*> OutThreadList;
 typedef std::map<int, Peer*> PeerTable;
 typedef std::map<int, int> SocketTable;
 typedef std::map<int, std::vector<AbstractMessage*> > MessageStore;
 typedef std::map<unsigned, std::map<unsigned, SnapShot*> > SnapShotTable;
+typedef std::map<int, int> SnapshotCount;
 class Dealer:TCPUtility{
     private:
         const unsigned MAX_QUEUE_SIZE = 100;
@@ -52,17 +52,17 @@ class Dealer:TCPUtility{
         PeerTable* _peerTable;
         std::deque<AbstractMessage*> _inMessageQueue;
         std::deque<AbstractMessage*> _outMessageQueue;
+        SnapshotCount _snapshotCount;
+        int _totalSnapShot;
     
         pthread_t _listenThread;
         pthread_t _connectThread;
         pthread_t _inProcessThread;
-        pthread_t _outProcessThread;
     
         SocketTable _socketTable;
         InThreadList _inThreads;
-        OutThreadList _outThreads;
-        MessageStore _messageStore;
         SnapShotTable _snapshotTable;
+        std::map<unsigned, unsigned> _snapshotCounter;
     
         std::map<unsigned, std::vector<SnapShot*> > recordingTable;
     
@@ -72,8 +72,9 @@ class Dealer:TCPUtility{
         static void* startConnectThread(void* ptr);
         static void* startInCommingMessageThread(void* ptr);
         static void* startOutGoingMessageThread(void* ptr);
+        bool isFinished();
     public:
-        Dealer(Peer* _selfInfo, PeerTable*  peers);
+        Dealer(Peer* _selfInfo, PeerTable*  peers, int totalSnapshot);
         int startListen();
         int startConnect();
         void registerThread(int pid, const char* ip, int port);
@@ -84,7 +85,6 @@ class Dealer:TCPUtility{
         void processInCommingMessage();
         void processOutGoingMessage();
         void startProcess();
-        //void clearUpCachedMessage(int pid);
         void reportReady(int pid, int sockfd);
         void join();
         Peer* getSelfInfo();
