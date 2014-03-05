@@ -25,7 +25,7 @@ int main(int argc, const char* argv[])
     }
     Peer* self = (*peers)[pid];
     peers->erase(pid);
-    Dealer* dealer = new Dealer(self, peers, 5);
+    Dealer* dealer = new Dealer(self, peers, 10);
 
     dealer->startListen();
     dealer->startConnect();

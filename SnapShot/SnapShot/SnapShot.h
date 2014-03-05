@@ -26,16 +26,26 @@ private:
     unsigned _counter;
     unsigned _snapshotId;
     unsigned _initiator;
+    unsigned _pid;
     unsigned _total;
     
 public:
-    SnapShot(unsigned initiator, unsigned sid, State& state, int num);
+    SnapShot(unsigned initiator, unsigned pid, unsigned sid, State& state, int num);
     bool isDone();
     bool ownMarker(MarkerMessage* marker);
     void save(unsigned pid);
     void report();
     void recordChannelState(Message* message);
+    std::string serialize();
     ~SnapShot();
+};
+
+class SnapShotGroup{
+private:
+    std::list<SnapShot*> _snapshots;
+public:
+    void add(SnapShot* entry);
+    void save(std::string& dest);
 };
 
 

@@ -30,28 +30,25 @@ typedef std::map<int, int> SocketTable;
 typedef std::map<int, std::vector<AbstractMessage*> > MessageStore;
 typedef std::map<unsigned, std::map<unsigned, SnapShot*> > SnapShotTable;
 typedef std::map<int, int> SnapshotCount;
+
 class Dealer:TCPUtility{
     private:
         const unsigned MAX_QUEUE_SIZE = 100;
         const unsigned DEFAULT_MONEY = 10000;
         const unsigned DEFAULT_WIDGETS = 10000;
     
-        //pthread_mutex_t _checkMutex = PTHREAD_MUTEX_INITIALIZER;
         pthread_mutex_t _inMutex = PTHREAD_MUTEX_INITIALIZER;
         pthread_mutex_t _outMutex = PTHREAD_MUTEX_INITIALIZER;
         pthread_mutex_t _printMutex = PTHREAD_MUTEX_INITIALIZER;
         pthread_mutex_t _updateMutex = PTHREAD_MUTEX_INITIALIZER;
     
         sem_t* _inMessageSem;
-        sem_t* _outMessageSem;
         std::string _inSemName;
-        std::string _outSemName;
-
+    
         State* _state;
         Peer* _selfInfo;
         PeerTable* _peerTable;
         std::deque<AbstractMessage*> _inMessageQueue;
-        std::deque<AbstractMessage*> _outMessageQueue;
         SnapshotCount _snapshotCount;
         int _totalSnapShot;
     
@@ -63,31 +60,33 @@ class Dealer:TCPUtility{
         InThreadList _inThreads;
         SnapShotTable _snapshotTable;
         std::map<unsigned, unsigned> _snapshotCounter;
-    
         std::map<unsigned, std::vector<SnapShot*> > recordingTable;
+        SnapShotGroup* _snapshotGroup;
+        std::string _logFileName;
     
         void waitForPeers();
         void connectPeers();
         static void* startListenThread(void* ptr);
         static void* startConnectThread(void* ptr);
         static void* startInCommingMessageThread(void* ptr);
-        static void* startOutGoingMessageThread(void* ptr);
         bool isFinished();
     public:
         Dealer(Peer* _selfInfo, PeerTable*  peers, int totalSnapshot);
         int startListen();
         int startConnect();
-        void registerThread(int pid, const char* ip, int port);
-
-    
         void queueInCommingMessage(AbstractMessage* msg);
-        void queueOutGoingMessage(AbstractMessage* msg);
+
         void processInCommingMessage();
         void processOutGoingMessage();
         void startProcess();
         void reportReady(int pid, int sockfd);
         void join();
         Peer* getSelfInfo();
+    
+    //static void* startOutGoingMessageThread(void* ptr);
+    // void queueOutGoingMessage(AbstractMessage* msg);
+    //void registerThread(int pid, const char* ip, int port);
+    
         ~Dealer();
 };
 

@@ -31,24 +31,4 @@ protected:
     Dealer* _parent;
     pthread_t _thread;
 };
-/*
-class SendThread : TCPUtility{
-public:
-    SendThread(Dealer* parent, int pid, int socket);
-    int start();
-    pthread_t getThread();
-    virtual void setup();
-    virtual void execute();
-protected:
-    int _pid;
-    int run();
-    static void* entryPoint(void* arg);
-    int _socket;
-    Dealer* _parent;
-    pthread_t _thread;
-};
-*/
-
-
-
 #endif /* defined(__SnapShot__Thread__) */

@@ -7,22 +7,29 @@ Dealer::Dealer(Peer* selfInfo, PeerTable* peerTable, int totalSnapshot){
     _peerTable = peerTable;
     _state = new State(DEFAULT_MONEY, DEFAULT_WIDGETS);
     _state->_timeVector = std::vector<unsigned>(_peerTable->size() + 1);
+    _snapshotGroup = new SnapShotGroup();
     
-    _inSemName = std::string("in semaphore");
-    _inSemName += _selfInfo->_id;
-    _outSemName = std::string("out semaphore");
-    _outSemName += _selfInfo->_id;
+    std::stringstream ss;
+    ss<<"in semaphore-"<< _selfInfo->_id;
+    _inSemName = ss.str();
+    
+    ss.str("");
+    ss<<"snapshots-"<<_selfInfo->_id;
+    _logFileName = ss.str();
+   
     _totalSnapShot = totalSnapshot;
-    
     sem_unlink(_inSemName.c_str());
-    sem_unlink(_outSemName.c_str());
     _inMessageSem = sem_open(_inSemName.c_str(), O_CREAT, 0600, 0);
-    _outMessageSem = sem_open(_outSemName.c_str(), O_CREAT, 0600, 0);
-    if(_inMessageSem == SEM_FAILED || _outMessageSem == SEM_FAILED) {
+    if(_inMessageSem == SEM_FAILED){// || _outMessageSem == SEM_FAILED) {
         perror("parent sem_open");
         exit(-1);
     }
     srand(RANDOM_SEED);
+    
+//    _outSemName = std::string("out semaphore");
+//    _outSemName += _selfInfo->_id;
+//    sem_unlink(_outSemName.c_str());
+//    _outMessageSem = sem_open(_outSemName.c_str(), O_CREAT, 0600, 0);
 };
 
 std::string timeVectorToStr(std::vector<unsigned>& timeVector){
@@ -159,20 +166,22 @@ void* Dealer::startInCommingMessageThread(void *ptr){
     return 0;
 }
 
-void* Dealer::startOutGoingMessageThread(void *ptr){
+/*void* Dealer::startOutGoingMessageThread(void *ptr){
     Dealer* thisPtr = (Dealer*)ptr;
     thisPtr->processOutGoingMessage();
     return 0;
 }
-
 void Dealer::queueOutGoingMessage(AbstractMessage* msg){
+
     pthread_mutex_lock(&_outMutex);
     {
         _outMessageQueue.push_back(msg);
     }
     pthread_mutex_unlock(&_outMutex);
     sem_post(_outMessageSem);
+ 
 }
+*/
 
 void Dealer::queueInCommingMessage(AbstractMessage* msg){
     pthread_mutex_lock(&_inMutex);
@@ -238,7 +247,7 @@ void Dealer::processInCommingMessage(){
                 SnapShot* snapshot = _snapshotTable[initiator][snapshotId];
                 if (snapshot == NULL) {
                     unsigned num = static_cast<unsigned>(_peerTable->size());
-                    snapshot = new SnapShot(initiator, snapshotId, *_state, num);
+                    snapshot = new SnapShot(initiator, _selfInfo->_id, snapshotId, *_state, num);
                     _snapshotTable[initiator][snapshotId] = snapshot;
 
                     MarkerMessage broadcast;
@@ -268,10 +277,12 @@ void Dealer::processInCommingMessage(){
                 snapshot->save(marker->_pid);
                 if(snapshot->isDone()){
                     _snapshotCounter[initiator] += 1;
+                    _snapshotGroup->add(snapshot);
                     snapshot->report();
                     std::cout<<"snapshot finished\n"<<std::endl;
                 }
                 if(isFinished()){
+                    _snapshotGroup->save(_logFileName);
                     std::cout<<"finished\n"<<std::endl;
                     exit(-1);
                 }
@@ -308,7 +319,7 @@ void Dealer::processOutGoingMessage(){
         tcpWrite(_socket, message, (int)strlen(message));
         delete message;
     }
-    sleep(1);
+    sleep(SLEEP_TIME);
     int counter = 0;
     while(counter < _totalSnapShot){
         for (SocketTable::iterator it = _socketTable.begin(); it!= _socketTable.end(); ++it) {
@@ -361,7 +372,7 @@ void Dealer::processOutGoingMessage(){
                 MarkerMessage marker;
                 char* buffer;
                 SnapShot* snapshot;
-                snapshot = new SnapShot(initiator, snapshotId, *_state, num);
+                snapshot = new SnapShot(initiator, _selfInfo->_id, snapshotId, *_state, num);
                 _snapshotTable[initiator][snapshotId] = snapshot;
                 marker._snapshotId = snapshotId;
                 marker._initiator = initiator;
@@ -382,11 +393,11 @@ void Dealer::processOutGoingMessage(){
         }
     }
 }
-
+/*
 void Dealer::registerThread(int pid, const char* ip, int port){
     
 }
-
+*/
 Peer* Dealer::getSelfInfo(){
     return _selfInfo;
 }

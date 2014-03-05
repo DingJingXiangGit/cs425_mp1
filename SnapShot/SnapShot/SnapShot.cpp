@@ -8,9 +8,13 @@
 
 #include "SnapShot.h"
 #include <stdio.h>
-SnapShot::SnapShot(unsigned initiator, unsigned sid, State& state, int num){
+#include <iostream>
+#include <fstream>
+
+SnapShot::SnapShot(unsigned initiator, unsigned pid, unsigned sid, State& state, int num){
     _initiator = initiator;
     _snapshotId = sid;
+    _pid = pid;
     _localState = new State(state);
     _total = num;
     _channelStates = std::map<unsigned, std::list<ChannelState*> >();
@@ -18,8 +22,7 @@ SnapShot::SnapShot(unsigned initiator, unsigned sid, State& state, int num){
 };
 
 bool SnapShot::isDone(){
-    std::cout<<"total is "<<_total<<std::endl;
-    std::cout<<"counter is "<<_counter<<std::endl;
+    std::cout<<"total is "<<_total<<" counter is "<<_counter<<std::endl;
     return (_total == _counter);
 };
 
@@ -44,31 +47,35 @@ void SnapShot::save(unsigned pid){
 
 void SnapShot::report(){
     if(_counter == _total){
-        std::stringstream ss;
-        ss<<"id "<<_initiator;
-        ss<<" : snapshot "<<_snapshotId;
-        ss<<" : logical "<<_localState->_time;
-        ss<<" : vector ";
-        ss<<"[";
-        for (int i = 0; i < _localState->_timeVector.size(); ++i) {
-            ss<<_localState->_timeVector[i]<<", ";
-        }
-        ss<<"]";
-        ss<<" : money "<<_localState->_money;
-        ss<<" : widgets "<<_localState->_widgets<<"\n";
-        
-        for (std::map<unsigned, std::list<ChannelState*> >::iterator i = _channelStates.begin(); i != _channelStates.end(); ++i)
-        {
-            std::list<ChannelState*>& csl = (i->second);
-            for (std::list<ChannelState*>::iterator item = csl.begin(); item != csl.end(); ++item) {
-                ChannelState& cs = *(*item);
-                ss << "message from "<<cs._source <<" to "<<cs._destination << "money "<< cs._money<<" widget "<<cs._widgets<<"\n";
-            }
-        }
-        std::cout<<ss.str()<<std::endl;
+        std::cout<<serialize()<<std::endl;
     }
 };
-
+std::string SnapShot::serialize(){
+    std::stringstream ss;
+    ss<<"initiator "<<_initiator;
+    ss<<" : pid "<< _pid;
+    ss<<" : snapshot "<<_snapshotId;
+    ss<<" : logical "<<_localState->_time;
+    ss<<" : vector ";
+    ss<<"[";
+    for (int i = 0; i < _localState->_timeVector.size(); ++i) {
+        ss<<_localState->_timeVector[i]<<", ";
+    }
+    ss<<"]";
+    ss<<" : money "<<_localState->_money;
+    ss<<" : widgets "<<_localState->_widgets<<"\n";
+    
+    for (std::map<unsigned, std::list<ChannelState*> >::iterator i = _channelStates.begin(); i != _channelStates.end(); ++i)
+    {
+        std::list<ChannelState*>& csl = (i->second);
+        for (std::list<ChannelState*>::iterator item = csl.begin(); item != csl.end(); ++item) {
+            ChannelState& cs = *(*item);
+            ss << "message " << cs._source <<" to "<<cs._destination << " : money "<< cs._money<<" widget "<<cs._widgets<<"\n";
+        }
+    }
+    std::cout<<ss.str()<<std::endl;
+    return ss.str();
+};
 
 SnapShot::~SnapShot(){
     /*
@@ -83,3 +90,18 @@ SnapShot::~SnapShot(){
     _channelStates.clear();
     delete _localState;
 };
+
+
+
+
+void SnapShotGroup::add(SnapShot* entry){
+    _snapshots.push_back(entry);
+}
+void SnapShotGroup::save(std::string& dest){
+    std::ofstream outputFile;
+    outputFile.open(dest);
+    for (std::list<SnapShot*>::iterator it = _snapshots.begin(); it != _snapshots.end(); it++){
+        outputFile<<(*it)->serialize()<<std::endl;
+    }
+    outputFile.close();
+}
