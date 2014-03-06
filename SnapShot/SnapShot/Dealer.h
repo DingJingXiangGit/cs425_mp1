@@ -20,8 +20,8 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <unistd.h>
+#include <exception>
 #include <errno.h>
-
 class ReceiveThread;
 class SendThread;
 typedef std::list<ReceiveThread*> InThreadList;
@@ -33,14 +33,14 @@ typedef std::map<int, int> SnapshotCount;
 
 class Dealer:TCPUtility{
     private:
-        const unsigned MAX_QUEUE_SIZE = 100;
-        const unsigned DEFAULT_MONEY = 10000;
-        const unsigned DEFAULT_WIDGETS = 10000;
+        static const unsigned MAX_QUEUE_SIZE = 100;
+        static const unsigned DEFAULT_MONEY = 10000;
+        static const unsigned DEFAULT_WIDGETS = 10000;
     
-        pthread_mutex_t _inMutex = PTHREAD_MUTEX_INITIALIZER;
-        pthread_mutex_t _outMutex = PTHREAD_MUTEX_INITIALIZER;
-        pthread_mutex_t _printMutex = PTHREAD_MUTEX_INITIALIZER;
-        pthread_mutex_t _updateMutex = PTHREAD_MUTEX_INITIALIZER;
+        pthread_mutex_t _inMutex;
+        pthread_mutex_t _outMutex;
+        pthread_mutex_t _printMutex;
+        pthread_mutex_t _updateMutex;
     
         sem_t* _inMessageSem;
         std::string _inSemName;

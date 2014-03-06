@@ -22,7 +22,7 @@ SnapShot::SnapShot(unsigned initiator, unsigned pid, unsigned sid, State& state,
 };
 
 bool SnapShot::isDone(){
-    std::cout<<"total is "<<_total<<" counter is "<<_counter<<std::endl;
+    //std::cout<<"total is "<<_total<<" counter is "<<_counter<<std::endl;
     return (_total == _counter);
 };
 
@@ -30,15 +30,14 @@ bool SnapShot::ownMarker(MarkerMessage* marker){
     return (marker->_snapshotId == _snapshotId && marker->_initiator == _initiator);
 };
 
-void SnapShot::recordChannelState(Message* message){
+void SnapShot::recordChannelState(unsigned pid, Message* message){
     unsigned money = message->_money;
     unsigned widget = message->_widgets;
     unsigned time = message->_time;
     unsigned source = message->_pid;
-    unsigned dest = _initiator;
-    ChannelState* channelState = new ChannelState(money,widget,time, message->_timeVector,source, dest);
+    unsigned dest = pid;
+    ChannelState* channelState = new ChannelState(money, widget, time, message->_timeVector, source, dest);
     _channelStates[source].push_back(channelState);
-    std::cout<<"logical "<<time<<" record channel state: "<<money <<", "<<widget << " from "<<source<<" to "<<dest<<std::endl;
 };
 
 void SnapShot::save(unsigned pid){
@@ -64,7 +63,7 @@ std::string SnapShot::serialize(){
     ss<<"]";
     ss<<" : money "<<_localState->_money;
     ss<<" : widgets "<<_localState->_widgets<<"\n";
-    
+    ss<<" : messages "<<_channelStates.size()<<"\n";
     for (std::map<unsigned, std::list<ChannelState*> >::iterator i = _channelStates.begin(); i != _channelStates.end(); ++i)
     {
         std::list<ChannelState*>& csl = (i->second);
@@ -73,7 +72,7 @@ std::string SnapShot::serialize(){
             ss << "message " << cs._source <<" to "<<cs._destination << " : money "<< cs._money<<" widget "<<cs._widgets<<"\n";
         }
     }
-    std::cout<<ss.str()<<std::endl;
+    //std::cout<<ss.str()<<std::endl;
     return ss.str();
 };
 
@@ -99,7 +98,7 @@ void SnapShotGroup::add(SnapShot* entry){
 }
 void SnapShotGroup::save(std::string& dest){
     std::ofstream outputFile;
-    outputFile.open(dest);
+    outputFile.open(dest.c_str());
     for (std::list<SnapShot*>::iterator it = _snapshots.begin(); it != _snapshots.end(); it++){
         outputFile<<(*it)->serialize()<<std::endl;
     }

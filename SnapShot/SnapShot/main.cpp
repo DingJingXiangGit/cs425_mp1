@@ -11,10 +11,16 @@
 #include "Peer.h"
 #include "Dealer.h"
 using namespace std;
+
 int main(int argc, const char* argv[])
 {
 
     // insert code here...
+    if(argc != 3){
+        cout<<"./application <pid> <peer file>"<<endl;
+        return 0;
+    }
+    
     int pid = atoi(argv[1]);
     const char* peerFile = argv[2];
     std::cout << "Process ID is " << pid << endl;
@@ -26,7 +32,6 @@ int main(int argc, const char* argv[])
     Peer* self = (*peers)[pid];
     peers->erase(pid);
     Dealer* dealer = new Dealer(self, peers, 10);
-
     dealer->startListen();
     dealer->startConnect();
     dealer->startProcess();

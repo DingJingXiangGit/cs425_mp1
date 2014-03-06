@@ -35,7 +35,7 @@ public:
     bool ownMarker(MarkerMessage* marker);
     void save(unsigned pid);
     void report();
-    void recordChannelState(Message* message);
+    void recordChannelState(unsigned pid, Message* message);
     std::string serialize();
     ~SnapShot();
 };

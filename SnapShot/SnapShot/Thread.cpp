@@ -33,7 +33,7 @@ void ReceiveThread::setup(){
             //_parent->registerThread(pid, ip, port);
             _pid = pid;
         }
-        std::cout<<"\n[receive] "<<buffer<<std::endl<<std::endl;
+        //std::cout<<"\n[receive] "<<buffer<<std::endl<<std::endl;
     }
     std::cout<<"setup completed."<<std::endl;
 };

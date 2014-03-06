@@ -29,6 +29,7 @@ public:
     static const int MARKER_ACTION = 2;
     static const int TIME_VECTOR_LENGTH = 256;
     AbstractMessage();
+    virtual ~AbstractMessage();
     int _action;
     unsigned _time;
     std::vector<unsigned> _timeVector;
@@ -47,6 +48,8 @@ class Message : public AbstractMessage{
         Message();
         virtual std::string toString();
         virtual char* toCharArray();
+        virtual ~Message();
+
 };
 
 class MarkerMessage : public AbstractMessage{
@@ -58,6 +61,7 @@ public:
     MarkerMessage(const MarkerMessage& other );
     virtual std::string toString();
     virtual char* toCharArray();
+    virtual ~MarkerMessage();
 };
 
 class InitMessage{

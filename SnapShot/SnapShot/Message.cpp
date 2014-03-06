@@ -23,6 +23,9 @@ const char* AbstractMessage::ACTION_MARKER = "{snapshotId:%04d, initiator:%04d, 
 
 AbstractMessage::AbstractMessage(){
 }
+AbstractMessage::~AbstractMessage(){
+}
+
 
 Message::Message(){
     _action = DELIVERY_ACTION;
@@ -91,6 +94,8 @@ char* Message::toCharArray(){
     return result;
 };
 
+Message::~Message(){
+};
 
 
 MarkerMessage::MarkerMessage(){
@@ -143,6 +148,8 @@ char* MarkerMessage::toCharArray(){
     return result;
 }
 
+MarkerMessage::~MarkerMessage(){
+};
 
 const char* InitMessage::INIT_MESSAGE_FORMAT = "{id:%09d, ip:%s, port:%05d}";
 const char* InitMessage::INIT_HEADER_FORMAT = "action:0000\r\nlength:%010d\r\n";
@@ -159,6 +166,5 @@ char* InitMessage::toCharArray(int pid, const char* ip, int port){
     ss << header << content;
     result = new char[ss.str().length() + 1];
     strcpy(result, ss.str().c_str());
-    std::cout << "send init message => "<<ss.str()<<std::endl;
     return result;
 };
