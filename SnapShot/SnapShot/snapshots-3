@@ -1,90 +1,61 @@
-initiator 0 : pid 3 : snapshot 1 : logical 0 : vector [0, 0, 0, 0, ] : money 10000 : widgets 10000
- : messages 0
+initiator 3 : pid 3 : snapshot 1 : logical 0 : vector [0, 0, 0, 0] : money 10000 : widgets 10000 : messages 0
 
-initiator 0 : pid 3 : snapshot 2 : logical 9 : vector [8, 0, 0, 3, ] : money 10014 : widgets 10140
- : messages 0
+initiator 3 : pid 3 : snapshot 2 : logical 8 : vector [0, 0, 0, 8] : money 9964 : widgets 9640 : messages 0
 
-initiator 0 : pid 3 : snapshot 3 : logical 58 : vector [57, 0, 0, 19, ] : money 10076 : widgets 10760
- : messages 0
+initiator 3 : pid 3 : snapshot 3 : logical 57 : vector [0, 0, 0, 57] : money 9730 : widgets 7300 : messages 0
 
-initiator 0 : pid 3 : snapshot 4 : logical 116 : vector [115, 0, 0, 38, ] : money 10179 : widgets 11790
- : messages 0
+initiator 3 : pid 3 : snapshot 4 : logical 116 : vector [0, 0, 0, 116] : money 9434 : widgets 4340 : messages 0
 
-initiator 0 : pid 3 : snapshot 5 : logical 188 : vector [187, 0, 0, 60, ] : money 10276 : widgets 12760
- : messages 0
+initiator 3 : pid 3 : snapshot 5 : logical 187 : vector [0, 0, 0, 187] : money 9117 : widgets 1170 : messages 0
 
-initiator 0 : pid 3 : snapshot 6 : logical 199 : vector [198, 0, 0, 64, ] : money 10296 : widgets 12960
- : messages 0
+initiator 3 : pid 3 : snapshot 6 : logical 199 : vector [0, 0, 0, 199] : money 9064 : widgets 640 : messages 0
 
-initiator 0 : pid 3 : snapshot 7 : logical 210 : vector [209, 0, 0, 68, ] : money 10323 : widgets 13230
- : messages 0
+initiator 3 : pid 3 : snapshot 7 : logical 210 : vector [0, 0, 0, 210] : money 9001 : widgets 10 : messages 0
 
-initiator 0 : pid 3 : snapshot 8 : logical 210 : vector [209, 0, 0, 68, ] : money 10323 : widgets 13230
- : messages 0
+initiator 3 : pid 3 : snapshot 8 : logical 210 : vector [0, 0, 0, 210] : money 9001 : widgets 10 : messages 0
 
-initiator 0 : pid 3 : snapshot 9 : logical 210 : vector [209, 0, 0, 68, ] : money 10323 : widgets 13230
- : messages 0
+initiator 3 : pid 3 : snapshot 9 : logical 210 : vector [0, 0, 0, 210] : money 9001 : widgets 10 : messages 0
 
-initiator 0 : pid 3 : snapshot 10 : logical 210 : vector [209, 0, 0, 68, ] : money 10323 : widgets 13230
- : messages 0
+initiator 3 : pid 3 : snapshot 10 : logical 210 : vector [0, 0, 0, 210] : money 9001 : widgets 10 : messages 0
 
-initiator 3 : pid 3 : snapshot 1 : logical 210 : vector [209, 0, 0, 68, ] : money 10323 : widgets 13230
- : messages 0
+initiator 1 : pid 3 : snapshot 1 : logical 210 : vector [0, 0, 0, 210] : money 9001 : widgets 10 : messages 0
 
-initiator 3 : pid 3 : snapshot 2 : logical 218 : vector [209, 0, 0, 76, ] : money 10287 : widgets 12870
- : messages 0
+initiator 1 : pid 3 : snapshot 2 : logical 218 : vector [0, 76, 0, 213] : money 9015 : widgets 150 : messages 0
 
-initiator 3 : pid 3 : snapshot 3 : logical 267 : vector [209, 0, 0, 125, ] : money 10053 : widgets 10530
- : messages 0
+initiator 1 : pid 3 : snapshot 3 : logical 267 : vector [0, 125, 0, 229] : money 9077 : widgets 770 : messages 0
 
-initiator 3 : pid 3 : snapshot 4 : logical 326 : vector [209, 0, 0, 184, ] : money 9757 : widgets 7570
- : messages 0
+initiator 1 : pid 3 : snapshot 4 : logical 325 : vector [0, 183, 0, 248] : money 9180 : widgets 1800 : messages 0
 
-initiator 3 : pid 3 : snapshot 5 : logical 397 : vector [209, 0, 0, 255, ] : money 9440 : widgets 4400
- : messages 0
+initiator 1 : pid 3 : snapshot 5 : logical 397 : vector [0, 255, 0, 270] : money 9277 : widgets 2770 : messages 0
 
-initiator 3 : pid 3 : snapshot 6 : logical 409 : vector [209, 0, 0, 267, ] : money 9387 : widgets 3870
- : messages 0
+initiator 1 : pid 3 : snapshot 6 : logical 408 : vector [0, 266, 0, 274] : money 9297 : widgets 2970 : messages 0
 
-initiator 3 : pid 3 : snapshot 7 : logical 426 : vector [209, 0, 0, 284, ] : money 9285 : widgets 2850
- : messages 0
+initiator 1 : pid 3 : snapshot 7 : logical 425 : vector [0, 283, 0, 280] : money 9339 : widgets 3390 : messages 0
 
-initiator 3 : pid 3 : snapshot 8 : logical 474 : vector [209, 0, 0, 332, ] : money 9054 : widgets 540
- : messages 0
+initiator 1 : pid 3 : snapshot 8 : logical 474 : vector [0, 332, 0, 295] : money 9410 : widgets 4100 : messages 0
 
-initiator 3 : pid 3 : snapshot 9 : logical 485 : vector [209, 0, 0, 343, ] : money 9001 : widgets 10
- : messages 0
+initiator 1 : pid 3 : snapshot 9 : logical 482 : vector [0, 340, 0, 297] : money 9423 : widgets 4230 : messages 0
 
-initiator 3 : pid 3 : snapshot 10 : logical 485 : vector [209, 0, 0, 343, ] : money 9001 : widgets 10
- : messages 0
+initiator 1 : pid 3 : snapshot 10 : logical 482 : vector [0, 340, 0, 297] : money 9423 : widgets 4230 : messages 0
 
-initiator 2 : pid 3 : snapshot 1 : logical 485 : vector [209, 0, 0, 343, ] : money 9001 : widgets 10
- : messages 0
+initiator 0 : pid 3 : snapshot 1 : logical 482 : vector [0, 340, 0, 297] : money 9423 : widgets 4230 : messages 0
 
-initiator 2 : pid 3 : snapshot 2 : logical 492 : vector [209, 0, 163, 346, ] : money 9015 : widgets 150
- : messages 0
+initiator 0 : pid 3 : snapshot 2 : logical 489 : vector [176, 341, 0, 299] : money 9436 : widgets 4360 : messages 1
+snapshot 2 : logical 489 : vector [176, 341, 0, 299message 0 to 3 : money 1 widget 10
 
-initiator 2 : pid 3 : snapshot 3 : logical 541 : vector [209, 0, 212, 362, ] : money 9077 : widgets 770
- : messages 0
+initiator 0 : pid 3 : snapshot 3 : logical 541 : vector [228, 341, 0, 316] : money 9499 : widgets 4990 : messages 0
 
-initiator 2 : pid 3 : snapshot 4 : logical 599 : vector [209, 0, 270, 381, ] : money 9180 : widgets 1800
- : messages 0
+initiator 0 : pid 3 : snapshot 4 : logical 599 : vector [286, 341, 0, 335] : money 9602 : widgets 6020 : messages 0
 
-initiator 2 : pid 3 : snapshot 5 : logical 671 : vector [209, 0, 342, 403, ] : money 9277 : widgets 2770
- : messages 0
+initiator 0 : pid 3 : snapshot 5 : logical 671 : vector [358, 341, 0, 357] : money 9699 : widgets 6990 : messages 0
 
-initiator 2 : pid 3 : snapshot 6 : logical 682 : vector [209, 0, 353, 407, ] : money 9297 : widgets 2970
- : messages 0
+initiator 0 : pid 3 : snapshot 6 : logical 682 : vector [369, 341, 0, 361] : money 9719 : widgets 7190 : messages 0
 
-initiator 2 : pid 3 : snapshot 7 : logical 699 : vector [209, 0, 370, 413, ] : money 9339 : widgets 3390
- : messages 0
+initiator 0 : pid 3 : snapshot 7 : logical 699 : vector [386, 341, 0, 367] : money 9761 : widgets 7610 : messages 0
 
-initiator 2 : pid 3 : snapshot 8 : logical 748 : vector [209, 0, 419, 428, ] : money 9410 : widgets 4100
- : messages 0
+initiator 0 : pid 3 : snapshot 8 : logical 748 : vector [435, 341, 0, 382] : money 9832 : widgets 8320 : messages 0
 
-initiator 2 : pid 3 : snapshot 9 : logical 824 : vector [209, 0, 495, 451, ] : money 9526 : widgets 5260
- : messages 0
+initiator 0 : pid 3 : snapshot 9 : logical 824 : vector [511, 341, 0, 405] : money 9948 : widgets 9480 : messages 0
 
-initiator 2 : pid 3 : snapshot 10 : logical 834 : vector [209, 0, 505, 453, ] : money 9543 : widgets 5430
- : messages 0
+initiator 0 : pid 3 : snapshot 10 : logical 851 : vector [538, 341, 0, 412] : money 9985 : widgets 9850 : messages 0
 
