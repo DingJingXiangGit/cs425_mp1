@@ -311,24 +311,24 @@ void Dealer::processOutGoingMessage(){
                 pthread_mutex_lock(&_updateMutex);
                 Message* msg = new Message();
                 unsigned money = (rand() % 10);
-                unsigned widget = money * 10 ;
+                unsigned widget = (rand() % 10);
                 msg->_money = money;
                 msg->_widgets = widget;
                 msg->_pid = it->first;
 
-                    if(money <= 0 || money >= _state->_money || widget >= _state->_widgets){
-                        pthread_mutex_unlock(&_outMutex);
-                        pthread_mutex_unlock(&_updateMutex);
-                        break;
-                    }
-                    _state->_time += 1;
-                    _state->_timeVector[_selfInfo->_id] += 1;
-                    if(msg->_action == AbstractMessage::DELIVERY_ACTION){
-                        _state->_money -= ((Message*)msg)->_money;
-                        _state->_widgets -= ((Message*)msg)->_widgets;
-                    }
-                    msg->_time = _state->_time;
-                    msg->_timeVector = _state->_timeVector;
+                if(money <= 0 || money >= _state->_money || widget >= _state->_widgets){
+                    //pthread_mutex_unlock(&_outMutex);
+                    pthread_mutex_unlock(&_updateMutex);
+                    break;
+                }
+                _state->_time += 1;
+                _state->_timeVector[_selfInfo->_id] += 1;
+                if(msg->_action == AbstractMessage::DELIVERY_ACTION){
+                    _state->_money -= ((Message*)msg)->_money;
+                    _state->_widgets -= ((Message*)msg)->_widgets;
+                }
+                msg->_time = _state->_time;
+                msg->_timeVector = _state->_timeVector;
 
                 pthread_mutex_lock(&_printMutex);
                 {

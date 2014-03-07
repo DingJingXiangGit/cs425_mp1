@@ -157,7 +157,7 @@ int main (int argc, const char* argv[])
 	    for (int i = 0; i < DEFAULT_NUM_PROCS; i++)
 	    {
 	    	char filename[20];
-	    	sprintf(filename, "snapshots.%d", i);
+	    	sprintf(filename, "snapshot.%d", i);
 	    	ifstream in(filename);
 
 	    	cout << endl << "Searching file: " << filename << endl;

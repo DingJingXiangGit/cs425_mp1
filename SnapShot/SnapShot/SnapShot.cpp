@@ -50,6 +50,7 @@ void SnapShot::report(){
     }
 };
 std::string SnapShot::serialize(){
+    int counter = 0;
     std::stringstream ss;
     ss<<"initiator "<<_initiator;
     ss<<" : id "<< _pid;
@@ -63,13 +64,20 @@ std::string SnapShot::serialize(){
     ss<<"]";
     ss<<" : money "<<_localState->_money;
     ss<<" : widgets "<<_localState->_widgets<<"\n";
-    ss<<" : messages "<<_channelStates.size()<<"\n";
+    
+    for (std::map<unsigned, std::list<ChannelState*> >::iterator i = _channelStates.begin(); i != _channelStates.end(); ++i)
+    {
+        std::list<ChannelState*>& csl = (i->second);
+        counter += csl.size();
+    }
+    
+    ss<<" : messages "<<counter<<"\n";
     for (std::map<unsigned, std::list<ChannelState*> >::iterator i = _channelStates.begin(); i != _channelStates.end(); ++i)
     {
         std::list<ChannelState*>& csl = (i->second);
         for (std::list<ChannelState*>::iterator item = csl.begin(); item != csl.end(); ++item) {
             ChannelState& cs = *(*item);
-            ss <<"id " << _pid <<" : snapshot "<< _snapshotId << " : vector [";
+            ss<<"initiator "<<_initiator << " : id " << _pid <<" : snapshot "<< _snapshotId << " : vector [";
             for (int i = 0; i < cs._timeVector.size(); ++i) {
                 ss<< cs._timeVector[i]<<", ";
             }

@@ -22,4 +22,4 @@ Message.o: Message.h Message.cpp
 	g++ $(CFLAG) Message.cpp -o Message.o 
 
 clean:
-	rm -rf *.o application
+	rm -rf *.o application search launcher

@@ -1,0 +1,42 @@
+
+Searching file: snapshot.0
+initiator 1 : id 0 : snapshot 1 : logical 49 : vector [24, 19, 40, 18, ] : money 10079 : widgets 10058
+initiator 1 : id 0 : snapshot 2 : logical 74 : vector [47, 42, 40, 40, ] : money 10056 : widgets 10030
+initiator 1 : id 0 : snapshot 2 : vector [43, 39, 40, 42, ] : message 3 to 0 : money 8 widget 0
+initiator 1 : id 0 : snapshot 3 : logical 76 : vector [49, 42, 40, 42, ] : money 10057 : widgets 10028
+initiator 1 : id 0 : snapshot 4 : logical 110 : vector [81, 75, 40, 71, ] : money 10045 : widgets 10006
+initiator 1 : id 0 : snapshot 5 : logical 114 : vector [85, 79, 40, 73, ] : money 10045 : widgets 10008
+
+Searching file: snapshot.1
+initiator 1 : id 1 : snapshot 1 : logical 45 : vector [16, 19, 40, 14, ] : money 10055 : widgets 10055
+initiator 1 : id 1 : snapshot 1 : vector [21, 14, 40, 13, ] : message 0 to 1 : money 4 widget 3
+initiator 1 : id 1 : snapshot 2 : logical 74 : vector [43, 43, 40, 40, ] : money 10021 : widgets 10028
+initiator 1 : id 1 : snapshot 2 : vector [45, 39, 40, 39, ] : message 0 to 1 : money 8 widget 0
+initiator 1 : id 1 : snapshot 2 : vector [43, 39, 40, 43, ] : message 3 to 1 : money 3 widget 3
+initiator 1 : id 1 : snapshot 3 : logical 76 : vector [45, 45, 40, 43, ] : money 10032 : widgets 10031
+initiator 1 : id 1 : snapshot 3 : vector [43, 39, 40, 44, ] : message 3 to 1 : money 7 widget 2
+initiator 1 : id 1 : snapshot 4 : logical 107 : vector [73, 76, 40, 67, ] : money 9994 : widgets 9999
+initiator 1 : id 1 : snapshot 4 : vector [78, 70, 40, 66, ] : message 0 to 1 : money 9 widget 4
+initiator 1 : id 1 : snapshot 4 : vector [75, 72, 40, 72, ] : message 3 to 1 : money 4 widget 5
+initiator 1 : id 1 : snapshot 5 : logical 110 : vector [78, 79, 40, 72, ] : money 10003 : widgets 10004
+initiator 1 : id 1 : snapshot 5 : vector [82, 75, 40, 71, ] : message 0 to 1 : money 4 widget 4
+
+Searching file: snapshot.2
+initiator 1 : id 2 : snapshot 1 : logical 46 : vector [17, 15, 43, 15, ] : money 9821 : widgets 9835
+initiator 1 : id 2 : snapshot 1 : vector [18, 16, 40, 19, ] : message 3 to 2 : money 5 widget 6
+initiator 1 : id 2 : snapshot 2 : logical 75 : vector [43, 43, 57, 41, ] : money 9893 : widgets 9899
+initiator 1 : id 2 : snapshot 2 : vector [46, 39, 40, 39, ] : message 0 to 2 : money 3 widget 3
+initiator 1 : id 2 : snapshot 3 : logical 76 : vector [46, 43, 58, 41, ] : money 9896 : widgets 9902
+initiator 1 : id 2 : snapshot 3 : vector [49, 42, 40, 42, ] : message 0 to 2 : money 7 widget 2
+initiator 1 : id 2 : snapshot 4 : logical 108 : vector [74, 76, 76, 68, ] : money 9971 : widgets 9992
+initiator 1 : id 2 : snapshot 4 : vector [79, 70, 40, 66, ] : message 0 to 2 : money 4 widget 5
+initiator 1 : id 2 : snapshot 5 : logical 109 : vector [79, 76, 77, 68, ] : money 9975 : widgets 9997
+initiator 1 : id 2 : snapshot 5 : vector [75, 72, 40, 74, ] : message 3 to 2 : money 4 widget 2
+
+Searching file: snapshot.3
+initiator 1 : id 3 : snapshot 1 : logical 48 : vector [18, 16, 40, 19, ] : money 10031 : widgets 10037
+initiator 1 : id 3 : snapshot 1 : vector [22, 14, 40, 13, ] : message 0 to 3 : money 5 widget 6
+initiator 1 : id 3 : snapshot 2 : logical 74 : vector [43, 39, 40, 43, ] : money 10008 : widgets 10037
+initiator 1 : id 3 : snapshot 3 : logical 75 : vector [43, 39, 40, 44, ] : money 10001 : widgets 10035
+initiator 1 : id 3 : snapshot 4 : logical 108 : vector [75, 72, 40, 72, ] : money 9973 : widgets 9989
+initiator 1 : id 3 : snapshot 5 : logical 113 : vector [83, 75, 40, 75, ] : money 9969 : widgets 9985
