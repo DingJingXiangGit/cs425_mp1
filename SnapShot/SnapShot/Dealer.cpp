@@ -19,7 +19,7 @@ Dealer::Dealer(Peer* selfInfo, PeerTable* peerTable, int totalSnapshot){
     _inSemName = ss.str();
     
     ss.str("");
-    ss<<"snapshots-"<<_selfInfo->_id;
+    ss<<"snapshot."<<_selfInfo->_id;
     _logFileName = ss.str();
    
     _totalSnapShot = totalSnapshot;
@@ -280,11 +280,14 @@ void Dealer::processInCommingMessage(){
 }
 
 bool Dealer::isFinished(){
+    std::cout<<"counter => "<<_snapshotCounter.size()<<"  peertable= "<<_peerTable->size()<<std::endl;
     if(_snapshotCounter.size() < _peerTable->size()){
         return false;
     }
     bool result = true;
     for (std::map<unsigned, unsigned>::iterator it = _snapshotCounter.begin(); it != _snapshotCounter.end(); ++it) {
+        std::cout<<"first => "<<it->second<<"  second= "<<_totalSnapShot<<std::endl;
+
         if(it->second != _totalSnapShot){
             result = false;
         }
@@ -344,7 +347,7 @@ void Dealer::processOutGoingMessage(){
                 pthread_mutex_unlock(&_outMutex);
                 pthread_mutex_unlock(&_updateMutex);
                 delete buffer;
-            }else if(counter <= _totalSnapShot){
+            }else if(counter < _totalSnapShot){
                 pthread_mutex_lock(&_updateMutex);
                 pthread_mutex_lock(&_outMutex);
                 {
