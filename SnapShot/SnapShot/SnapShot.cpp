@@ -99,7 +99,8 @@ SnapShot::~SnapShot(){
 
 void SnapShotGroup::add(SnapShot* entry){
     _snapshots.push_back(entry);
-}
+};
+
 void SnapShotGroup::save(std::string& dest){
     std::ofstream outputFile;
     outputFile.open(dest.c_str());
@@ -107,4 +108,4 @@ void SnapShotGroup::save(std::string& dest){
         outputFile<<(*it)->serialize()<<std::endl;
     }
     outputFile.close();
-}
+};
