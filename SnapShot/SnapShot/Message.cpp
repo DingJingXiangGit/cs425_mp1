@@ -58,12 +58,13 @@ void parseTimeVector( vector<unsigned>& timeVector, string& input, string delimi
 
 Message::Message(unsigned action, int pid, char* msg){
     std::string delimiter = ", ";
+    _content = new char[strlen(msg)+1];
+    strcpy(_content, msg);
     _pid = pid;
     std::string timeString(msg);
     sscanf(msg, ACTION_MSG_PARSE, &_money, &_widgets, &_time);
     timeString = timeString.substr(timeString.find("[") + 1, timeString.find("]") - timeString.find("[") - 1);
     _action = action;
-    _timeVector = std::vector<unsigned>();
     parseTimeVector(_timeVector, timeString, delimiter);
 }
 
@@ -104,12 +105,13 @@ MarkerMessage::MarkerMessage(){
 
 MarkerMessage::MarkerMessage(unsigned action, int pid, char* msg){
     std::string delimiter = ", ";
+    _content = new char[strlen(msg)+1];
+    strcpy(_content, msg);
     _action = MARKER_ACTION;
     _pid = pid;
     std::string timeString(msg);
     sscanf(msg, ACTION_MARKER_PARSE, &_snapshotId, &_initiator, &_time);
     timeString = timeString.substr(timeString.find("[") + 1, timeString.find("]") - timeString.find("[") - 1);
-    _timeVector = std::vector<unsigned>();
     parseTimeVector(_timeVector, timeString, delimiter);
 };
 

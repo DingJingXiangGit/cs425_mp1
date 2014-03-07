@@ -43,6 +43,7 @@ void ReceiveThread::execute(){
     memset(header, 0 , sizeof(header));
     while(true){
         try{
+
             if(tcpRead(_socket, header, AbstractMessage::ACTION_HEADER_SIZE)){
                 unsigned size = 0;
                 unsigned action = 0;
@@ -53,8 +54,13 @@ void ReceiveThread::execute(){
                     AbstractMessage* message = NULL;
                     if(action == AbstractMessage::DELIVERY_ACTION){
                         message = new Message(action, _pid, content);
-                    }else{
+                    }else if(action == AbstractMessage::MARKER_ACTION){
                         message = new MarkerMessage(action, _pid, content);
+                    }
+                    
+                    if(message == NULL){
+                        std::cout<<"null content is: "<<content<<std::endl;
+                        exit(-1);
                     }
                     _parent->queueInCommingMessage(message);
                 }else{

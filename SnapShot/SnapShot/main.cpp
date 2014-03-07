@@ -16,13 +16,14 @@ int main(int argc, const char* argv[])
 {
 
     // insert code here...
-    if(argc != 3){
-        cout<<"./application <pid> <peer file>"<<endl;
+    if(argc != 4){
+        cout<<"./application <pid> <peer file> <number of snapshot>"<<endl;
         return 0;
     }
     
     int pid = atoi(argv[1]);
     const char* peerFile = argv[2];
+    int numSnapshot = atoi(argv[3]);
     std::cout << "Process ID is " << pid << endl;
     std::cout << "Peer Information File is " << peerFile << endl;
     map<int, Peer*>* peers = PeerParser::parsePeers(peerFile, 1);
@@ -31,7 +32,7 @@ int main(int argc, const char* argv[])
     }
     Peer* self = (*peers)[pid];
     peers->erase(pid);
-    Dealer* dealer = new Dealer(self, peers, 10);
+    Dealer* dealer = new Dealer(self, peers, numSnapshot);
     dealer->startListen();
     dealer->startConnect();
     dealer->startProcess();

@@ -52,7 +52,7 @@ void SnapShot::report(){
 std::string SnapShot::serialize(){
     std::stringstream ss;
     ss<<"initiator "<<_initiator;
-    ss<<" : pid "<< _pid;
+    ss<<" : id "<< _pid;
     ss<<" : snapshot "<<_snapshotId;
     ss<<" : logical "<<_localState->_time;
     ss<<" : vector ";
@@ -69,10 +69,14 @@ std::string SnapShot::serialize(){
         std::list<ChannelState*>& csl = (i->second);
         for (std::list<ChannelState*>::iterator item = csl.begin(); item != csl.end(); ++item) {
             ChannelState& cs = *(*item);
-            ss << "message " << cs._source <<" to "<<cs._destination << " : money "<< cs._money<<" widget "<<cs._widgets<<"\n";
+            ss <<"id " << _pid <<" : snapshot "<< _snapshotId << " : vector [";
+            for (int i = 0; i < cs._timeVector.size(); ++i) {
+                ss<< cs._timeVector[i]<<", ";
+            }
+            ss<<"]";
+            ss << " : message " << cs._source <<" to "<<cs._destination << " : money "<< cs._money<<" widget "<<cs._widgets<<"\n";
         }
     }
-    //std::cout<<ss.str()<<std::endl;
     return ss.str();
 };
 

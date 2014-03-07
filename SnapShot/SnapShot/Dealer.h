@@ -11,7 +11,7 @@
 #include <list>
 #include <string>
 #include <algorithm>
-#include <deque>
+#include <queue>
 #include <semaphore.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -31,29 +31,29 @@ typedef std::map<int, std::vector<AbstractMessage*> > MessageStore;
 typedef std::map<unsigned, std::map<unsigned, SnapShot*> > SnapShotTable;
 typedef std::map<int, int> SnapshotCount;
 
+//pthread_t _connectThread;
+
 class Dealer:TCPUtility{
     private:
         static const unsigned MAX_QUEUE_SIZE = 100;
         static const unsigned DEFAULT_MONEY = 10000;
         static const unsigned DEFAULT_WIDGETS = 10000;
     
-        pthread_mutex_t _inMutex;
         pthread_mutex_t _outMutex;
-        pthread_mutex_t _printMutex;
+        pthread_mutex_t _inMutex;
         pthread_mutex_t _updateMutex;
-    
+        pthread_mutex_t _printMutex;
         sem_t* _inMessageSem;
         std::string _inSemName;
     
         State* _state;
         Peer* _selfInfo;
         PeerTable* _peerTable;
-        std::deque<AbstractMessage*> _inMessageQueue;
+        std::queue<AbstractMessage*> _inMessageQueue;
         SnapshotCount _snapshotCount;
         int _totalSnapShot;
     
         pthread_t _listenThread;
-        pthread_t _connectThread;
         pthread_t _inProcessThread;
     
         SocketTable _socketTable;
@@ -71,6 +71,7 @@ class Dealer:TCPUtility{
         static void* startInCommingMessageThread(void* ptr);
         bool isFinished();
     public:
+
         Dealer(Peer* _selfInfo, PeerTable*  peers, int totalSnapshot);
         int startListen();
         int startConnect();
@@ -79,14 +80,7 @@ class Dealer:TCPUtility{
         void processInCommingMessage();
         void processOutGoingMessage();
         void startProcess();
-        void reportReady(int pid, int sockfd);
         void join();
-        Peer* getSelfInfo();
-    
-    //static void* startOutGoingMessageThread(void* ptr);
-    // void queueOutGoingMessage(AbstractMessage* msg);
-    //void registerThread(int pid, const char* ip, int port);
-    
         ~Dealer();
 };
 

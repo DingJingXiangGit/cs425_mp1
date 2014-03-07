@@ -1,9 +1,6 @@
 #include "Dealer.h"
+#include <exception>
 
-pthread_mutex_t _outMutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t _inMutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t _printMutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t _updateMutex = PTHREAD_MUTEX_INITIALIZER;
 
 
 Dealer::Dealer(Peer* selfInfo, PeerTable* peerTable, int totalSnapshot){
@@ -12,6 +9,10 @@ Dealer::Dealer(Peer* selfInfo, PeerTable* peerTable, int totalSnapshot){
     _state = new State(DEFAULT_MONEY, DEFAULT_WIDGETS);
     _state->_timeVector = std::vector<unsigned>(_peerTable->size() + 1);
     _snapshotGroup = new SnapShotGroup();
+    pthread_mutex_init(&_outMutex, NULL);
+    pthread_mutex_init(&_inMutex, NULL);
+    pthread_mutex_init(&_updateMutex, NULL);
+    pthread_mutex_init(&_printMutex, NULL);
     
     std::stringstream ss;
     ss<<"in semaphore-"<< _selfInfo->_id;
@@ -29,11 +30,6 @@ Dealer::Dealer(Peer* selfInfo, PeerTable* peerTable, int totalSnapshot){
         exit(-1);
     }
     srand(RANDOM_SEED);
-    
-//    _outSemName = std::string("out semaphore");
-//    _outSemName += _selfInfo->_id;
-//    sem_unlink(_outSemName.c_str());
-//    _outMessageSem = sem_open(_outSemName.c_str(), O_CREAT, 0600, 0);
 };
 
 std::string timeVectorToStr(std::vector<unsigned>& timeVector){
@@ -109,9 +105,6 @@ void Dealer::connectPeers(){
             close(sockfd);
             sleep(1);
         }
-        //SendThread* thread = new SendThread(this, peer->_id, sockfd);
-        //_outThreads.push_back(thread);
-        //thread->start();
         _socketTable[peer->_id] = sockfd;
     }
     std::cout<< "Outgoing connection setup completed." << std::endl;
@@ -136,28 +129,18 @@ int Dealer::startListen(){
 
 int  Dealer::startConnect(){
     connectPeers();
-    //int ret = pthread_create(&_listenThread, NULL, Dealer::startConnectThread, (void*) this);
     return 0;
 }
 
 void Dealer::join(){
-    pthread_join(_listenThread, NULL);
-    pthread_join(_connectThread, NULL);
     pthread_join(_inProcessThread, NULL);
-    
     for (InThreadList::iterator it = _inThreads.begin(); it != _inThreads.end(); ++it){
         pthread_join((*it)->getThread(), NULL);
     }
 }
 
-
-void Dealer::reportReady(int pid, int sockfd){
-    _socketTable[pid] = sockfd;
-}
-
 void Dealer::startProcess(){
     pthread_create(&_inProcessThread, NULL, Dealer::startInCommingMessageThread, (void*) this);
-    //pthread_create(&_outProcessThread, NULL, Dealer::startOutGoingMessageThread, (void*) this);
     processOutGoingMessage();
 }
 
@@ -167,59 +150,48 @@ void* Dealer::startInCommingMessageThread(void *ptr){
     return 0;
 }
 
-/*void* Dealer::startOutGoingMessageThread(void *ptr){
-    Dealer* thisPtr = (Dealer*)ptr;
-    thisPtr->processOutGoingMessage();
-    return 0;
-}
-void Dealer::queueOutGoingMessage(AbstractMessage* msg){
-
-    pthread_mutex_lock(&_outMutex);
-    {
-        _outMessageQueue.push_back(msg);
-    }
-    pthread_mutex_unlock(&_outMutex);
-    sem_post(_outMessageSem);
- 
-}
-*/
-
 void Dealer::queueInCommingMessage(AbstractMessage* msg){
     pthread_mutex_lock(&_inMutex);
     {
-        _inMessageQueue.push_back(msg);
+        _inMessageQueue.push(msg);
+        sem_post(_inMessageSem);
     }
     pthread_mutex_unlock(&_inMutex);
-    sem_post(_inMessageSem);
 }
 
 void Dealer::processInCommingMessage(){
+    AbstractMessage* msg;
     while(true){
         sem_wait(_inMessageSem);
-        
-        AbstractMessage* msg;
         pthread_mutex_lock(&_inMutex);
         {
             msg = _inMessageQueue.front();
-            _inMessageQueue.pop_front();
+            _inMessageQueue.pop();
+            if(msg == NULL){
+                std::cout<<"null message"<<_inMessageQueue.size()<<std::endl;
+                exit(-1);
+            }
         }
         pthread_mutex_unlock(&_inMutex);
         
         pthread_mutex_lock(&_updateMutex);
         {
+            pthread_mutex_lock(&_outMutex);
+            
             if(msg->_action == AbstractMessage::DELIVERY_ACTION){
                 if(msg->_time > _state->_time){
                     _state->_time = std::max(_state->_time, msg->_time);
                 }
+
                 for(int i = 0; i < _state->_timeVector.size(); ++i){
                     if(i != _selfInfo->_id){
                         _state->_timeVector[i] = std::max(_state->_timeVector[i], msg->_timeVector[i]);
                     }
                 }
+
                 _state->_time += 1;
                 _state->_timeVector[_selfInfo->_id] += 1;
             }
-           
             pthread_mutex_lock(&_printMutex);
             {
                 if(msg->_action == AbstractMessage::DELIVERY_ACTION){
@@ -232,13 +204,20 @@ void Dealer::processInCommingMessage(){
                 }
             }
             pthread_mutex_unlock(&_printMutex);
-            
             if(msg->_action == AbstractMessage::DELIVERY_ACTION){
+
                 _state->_money += ((Message*)msg)->_money;
+
                 _state->_widgets += ((Message*)msg)->_widgets;
-                std::vector<SnapShot*>& snapshots = recordingTable[msg->_pid];
-                for (int i = 0; i < snapshots.size(); ++i) {
-                    snapshots[i]->recordChannelState(_selfInfo->_id, (Message*)msg);
+
+                if(recordingTable.find(msg->_pid) != recordingTable.end()){
+                    std::vector<SnapShot*>& snapshots = recordingTable[msg->_pid];
+
+                    for (int i = 0; i < snapshots.size(); ++i){
+                        if ( snapshots[i] != NULL) {
+                            snapshots[i]->recordChannelState(_selfInfo->_id, (Message*)msg);
+                        }
+                    }
                 }
             }else if(msg->_action == AbstractMessage::MARKER_ACTION){
                 MarkerMessage* marker = (MarkerMessage*)msg;
@@ -249,18 +228,16 @@ void Dealer::processInCommingMessage(){
                     unsigned num = static_cast<unsigned>(_peerTable->size());
                     snapshot = new SnapShot(initiator, _selfInfo->_id, snapshotId, *_state, num);
                     _snapshotTable[initiator][snapshotId] = snapshot;
-
                     MarkerMessage broadcast;
                     char* buffer;
                     broadcast._snapshotId = snapshotId;
                     broadcast._initiator = initiator;
                     broadcast._time = _state->_time;
                     broadcast._timeVector = _state->_timeVector;
+                    broadcast._pid = _selfInfo->_id;
                     buffer = broadcast.toCharArray();
-                    for (SocketTable::iterator it = _socketTable.begin(); it != _socketTable.end(); ++it) {
-                        pthread_mutex_lock(&_outMutex);
+                    for (SocketTable::iterator it = _socketTable.begin(); it != _socketTable.end(); ++it){
                         tcpWrite(it->second, buffer, (int)strlen(buffer));
-                        pthread_mutex_unlock(&_outMutex);
                         if(it->first != marker->_pid){
                             recordingTable[it->first].push_back(snapshot);
                         }
@@ -290,9 +267,12 @@ void Dealer::processInCommingMessage(){
                         }
                         close(2);
                     }
-                    exit(-1);
+                    sleep(3);
+                    return;
                 }
             }
+
+            pthread_mutex_unlock(&_outMutex);
         }
         pthread_mutex_unlock(&_updateMutex);
         delete msg;
@@ -305,7 +285,6 @@ bool Dealer::isFinished(){
     }
     bool result = true;
     for (std::map<unsigned, unsigned>::iterator it = _snapshotCounter.begin(); it != _snapshotCounter.end(); ++it) {
-        //std::cout<<"initiator "<<it->first<<" counter: "<<it->second<<std::endl;
         if(it->second != _totalSnapShot){
             result = false;
         }
@@ -325,19 +304,22 @@ void Dealer::processOutGoingMessage(){
     sleep(SLEEP_TIME);
     int counter = 0;
     while(counter < _totalSnapShot){
-        //usleep(100 * 1000);
+        usleep(10 * 1000);
         for (SocketTable::iterator it = _socketTable.begin(); it!= _socketTable.end(); ++it) {
             int _socket = it->second;
             unsigned decision = (rand() % 100);
-            if(decision){
+            if(decision<90){
+                pthread_mutex_lock(&_updateMutex);
+                pthread_mutex_lock(&_outMutex);
                 Message* msg = new Message();
                 unsigned money = (rand() % 10);
                 unsigned widget = money * 10 ;
                 msg->_money = money;
                 msg->_widgets = widget;
                 msg->_pid = it->first;
-                pthread_mutex_lock(&_updateMutex);
+
                     if(money <= 0 || money >= _state->_money || widget >= _state->_widgets){
+                        pthread_mutex_unlock(&_outMutex);
                         pthread_mutex_unlock(&_updateMutex);
                         break;
                     }
@@ -349,7 +331,6 @@ void Dealer::processOutGoingMessage(){
                     }
                     msg->_time = _state->_time;
                     msg->_timeVector = _state->_timeVector;
-                pthread_mutex_unlock(&_updateMutex);
 
                 pthread_mutex_lock(&_printMutex);
                 {
@@ -358,50 +339,43 @@ void Dealer::processOutGoingMessage(){
                     }
                 }
                 pthread_mutex_unlock(&_printMutex);
-                
                 char* buffer = msg->toCharArray();
-                pthread_mutex_lock(&_outMutex);
                 tcpWrite(_socket, buffer, (int)strlen(buffer));
                 pthread_mutex_unlock(&_outMutex);
+                pthread_mutex_unlock(&_updateMutex);
                 delete buffer;
             }else if(counter <= _totalSnapShot){
-                unsigned initiator = _selfInfo->_id;
-                unsigned snapshotId = static_cast<unsigned>(_snapshotTable[initiator].size()) + 1;
-                unsigned num = static_cast<unsigned>(_peerTable->size());
-                MarkerMessage marker;
-                char* buffer;
-                SnapShot* snapshot;
-                snapshot = new SnapShot(initiator, _selfInfo->_id, snapshotId, *_state, num);
-                _snapshotTable[initiator][snapshotId] = snapshot;
-                marker._snapshotId = snapshotId;
-                marker._initiator = initiator;
                 pthread_mutex_lock(&_updateMutex);
+                pthread_mutex_lock(&_outMutex);
                 {
-                    marker._time = _state->_time;
-                    marker._timeVector = _state->_timeVector;
+                    unsigned initiator = _selfInfo->_id;
+                    unsigned snapshotId = static_cast<unsigned>(_snapshotTable[initiator].size()) + 1;
+                    unsigned num = static_cast<unsigned>(_peerTable->size());
+                    MarkerMessage marker;
+                    char* buffer;
+                    SnapShot* snapshot;
+                    snapshot = new SnapShot(initiator, _selfInfo->_id, snapshotId, *_state, num);
+                    _snapshotTable[initiator][snapshotId] = snapshot;
+                    marker._snapshotId = snapshotId;
+                    marker._initiator = initiator;
+
+                        marker._time = _state->_time;
+                        marker._timeVector = _state->_timeVector;
+
+                    buffer = marker.toCharArray();
+
+                    for (SocketTable::iterator it = _socketTable.begin(); it != _socketTable.end(); ++it) {
+                        tcpWrite(it->second, buffer, (int)strlen(buffer));
+                        recordingTable[it->first].push_back(snapshot);
+                    }
+                    delete buffer;
                 }
+                pthread_mutex_unlock(&_outMutex);
                 pthread_mutex_unlock(&_updateMutex);
-                buffer = marker.toCharArray();
-                for (SocketTable::iterator it = _socketTable.begin(); it != _socketTable.end(); ++it) {
-                    pthread_mutex_lock(&_outMutex);
-                    tcpWrite(it->second, buffer, (int)strlen(buffer));
-                    pthread_mutex_unlock(&_outMutex);
-                    recordingTable[it->first].push_back(snapshot);
-                }
-                delete buffer;
                 ++counter;
             }
         }
     }
 }
-/*
-void Dealer::registerThread(int pid, const char* ip, int port){
-    
-}
-*/
-Peer* Dealer::getSelfInfo(){
-    return _selfInfo;
-}
-
 Dealer::~Dealer(){
 }
