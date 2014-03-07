@@ -1,0 +1,52 @@
+initiator 3 : id 0 : snapshot 1 : logical 5 : vector [2, 0, 0, 4, ] : money 10010 : widgets 10100
+ : messages 0
+
+initiator 3 : id 0 : snapshot 2 : logical 16 : vector [5, 0, 0, 15, ] : money 10019 : widgets 10190
+ : messages 0
+
+initiator 3 : id 0 : snapshot 3 : logical 31 : vector [10, 0, 0, 30, ] : money 10039 : widgets 10390
+ : messages 0
+
+initiator 3 : id 0 : snapshot 4 : logical 31 : vector [10, 0, 0, 30, ] : money 10039 : widgets 10390
+ : messages 0
+
+initiator 0 : id 0 : snapshot 1 : logical 41 : vector [20, 16, 16, 30, ] : money 10029 : widgets 10290
+ : messages 0
+
+initiator 1 : id 0 : snapshot 1 : logical 43 : vector [22, 16, 16, 30, ] : money 10023 : widgets 10230
+ : messages 0
+
+initiator 2 : id 0 : snapshot 1 : logical 43 : vector [22, 16, 16, 30, ] : money 10023 : widgets 10230
+ : messages 0
+
+initiator 1 : id 0 : snapshot 2 : logical 60 : vector [39, 34, 35, 30, ] : money 9985 : widgets 9850
+ : messages 0
+
+initiator 2 : id 0 : snapshot 2 : logical 60 : vector [39, 34, 35, 30, ] : money 9985 : widgets 9850
+ : messages 0
+
+initiator 0 : id 0 : snapshot 2 : logical 58 : vector [37, 34, 35, 30, ] : money 9998 : widgets 9980
+ : messages 0
+
+initiator 2 : id 0 : snapshot 3 : logical 83 : vector [60, 59, 60, 30, ] : money 9974 : widgets 9740
+ : messages 0
+
+initiator 1 : id 0 : snapshot 3 : logical 83 : vector [60, 59, 60, 30, ] : money 9974 : widgets 9740
+ : messages 0
+
+initiator 0 : id 0 : snapshot 3 : logical 81 : vector [58, 57, 59, 30, ] : money 9968 : widgets 9680
+ : messages 2
+id 0 : snapshot 3 : vector [55, 59, 55, 30, ] : message 1 to 0 : money 3 widget 30
+id 0 : snapshot 3 : vector [51, 53, 60, 30, ] : message 2 to 0 : money 3 widget 30
+
+initiator 2 : id 0 : snapshot 4 : logical 83 : vector [60, 59, 60, 30, ] : money 9974 : widgets 9740
+ : messages 0
+
+initiator 1 : id 0 : snapshot 4 : logical 83 : vector [60, 59, 60, 30, ] : money 9974 : widgets 9740
+ : messages 0
+
+initiator 0 : id 0 : snapshot 4 : logical 81 : vector [58, 57, 59, 30, ] : money 9968 : widgets 9680
+ : messages 2
+id 0 : snapshot 4 : vector [55, 59, 55, 30, ] : message 1 to 0 : money 3 widget 30
+id 0 : snapshot 4 : vector [51, 53, 60, 30, ] : message 2 to 0 : money 3 widget 30
+
