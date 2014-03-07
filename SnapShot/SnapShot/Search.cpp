@@ -7,6 +7,9 @@ using namespace std;
 
 #define DEFAULT_NUM_PROCS 4
 
+/* 
+ * Comparison functions
+ */
 int parse_int_for_key(string s, string key, int offset)
 {
 	int start = s.find(key) + offset;
@@ -87,26 +90,37 @@ bool compare_vector(const string &first, const string &second)
 	return false;
 }
 
+/*
+ * Search main entry
+ */
 int main (int argc, const char* argv[])
 {	
+	// Check arguments
 	if (argc < 2){
         cout << "usage: ./search [keyword] [sorted] [comparison]" << endl;
         cout << "i.e. ./search snapshot 1 sorted pid" << endl;
         return 0;
     }
 
+    // Default values
 	string keyword = string(argv[1]);;
 	bool sorted = false;
 	list<string> matches;
-
-	cout << "keyword: " << keyword << endl;
 	bool (*comparison)(const string&, const string&) = compare_pid;    
 
+	// Change keyword for convenience
+	if (keyword == "message")
+	{
+		keyword = "message ";
+	}
+
+	// Set sorted option if defined
     if (argc >= 3 && argv[2] != NULL)
     {
     	sorted = true;
     }
 
+    // Set comparison method if defined
     if (argc >= 4 && argv[3] != NULL)
     {
     	string comp(argv[3]);
@@ -124,6 +138,7 @@ int main (int argc, const char* argv[])
     	}
     }
 
+    // Go through the log files line by line
     string line;
     for (int i = 0; i < DEFAULT_NUM_PROCS; i++)
     {
@@ -139,6 +154,7 @@ int main (int argc, const char* argv[])
 			{
 				if (line.find(keyword) != string::npos)
 				{
+					// If not sorting, just print the match, otherwise store it for sorting
 					if (!sorted)
 					{
 						cout << line << endl;
@@ -152,6 +168,7 @@ int main (int argc, const char* argv[])
 	    }
 	}
 
+	// Sort with specified comparison method and print
     if (sorted)
     {
     	cout << endl << "Sorting ..." << endl;
