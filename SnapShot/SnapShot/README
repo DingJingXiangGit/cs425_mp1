@@ -1,0 +1,20 @@
+README
+
+included:
+    All source files (.cc, .hh, .cpp, .h)
+    this README
+    Makefile
+    peer_list
+
+MP #1
+    Compile:
+        make clean
+        make
+    Run:
+        To launcher all processes all together:
+            ./launcher <peer file> <# of snapshots>
+        To launcher each process one by one:
+            ./application <id> <peer file> <# of snapshots>
+
+    Result:
+        The result of the snapshot information will be saved into the file named "snapshot.<id>", where 
