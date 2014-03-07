@@ -18,3 +18,17 @@ MP #1
 
     Result:
         The result of the snapshot information will be saved into the file named "snapshot.<id>", where 
+
+Search:
+    Usage is of the form:
+        ./search [keyword] [sorted] [comparison method] [file]
+    
+    The search is very similar similar to grep.
+    The keyword string is what will be used to match a line, if a line contains the keyword the line will be printed. The second parameter will indicate to turn sorting on, its value can be anything. The third parameter - comparison method - defines how lines will be sorted. Available options are: pid, logical, vector.
+
+    Common examples:
+        ./search "snapshot 1" sort logical
+        ./search "initiator1"
+        ./search "message"
+        ./search "snapshot 1" sort pid "snapshot.0"
+

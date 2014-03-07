@@ -97,13 +97,14 @@ int main (int argc, const char* argv[])
 {	
 	// Check arguments
 	if (argc < 2){
-        cout << "usage: ./search [keyword] [sorted] [comparison]" << endl;
+        cout << "usage: ./search [keyword] [sorted] [comparison] [file]" << endl;
         cout << "i.e. ./search snapshot 1 sorted pid" << endl;
         return 0;
     }
 
     // Default values
-	string keyword = string(argv[1]);;
+	string keyword = string(argv[1]);
+	const char* file = NULL;
 	bool sorted = false;
 	list<string> matches;
 	bool (*comparison)(const string&, const string&) = compare_pid;    
@@ -138,15 +139,54 @@ int main (int argc, const char* argv[])
     	}
     }
 
-    // Go through the log files line by line
-    string line;
-    for (int i = 0; i < DEFAULT_NUM_PROCS; i++)
+    // Check for specific file
+    if(argc >=5 && argv[4] != NULL)
     {
-    	char filename[20];
-    	sprintf(filename, "snapshots-%d", i);
-    	ifstream in(filename);
+    	file = argv[4];
+    	ifstream ifile(file);
+    	if (!ifile)
+    	{
+    		cout << "specified file doesn't exist" << endl;
+    	}
+    }
 
-    	cout << endl << "Searching file: " << filename << endl;
+    // Go through the log files or specified file line by line
+    string line;
+    if (file == NULL)
+    {
+	    for (int i = 0; i < DEFAULT_NUM_PROCS; i++)
+	    {
+	    	char filename[20];
+	    	sprintf(filename, "snapshots.%d", i);
+	    	ifstream in(filename);
+
+	    	cout << endl << "Searching file: " << filename << endl;
+
+		    if (in.is_open())
+		    {
+				while (getline(in,line))
+				{
+					if (line.find(keyword) != string::npos)
+					{
+						// If not sorting, just print the match, otherwise store it for sorting
+						if (!sorted)
+						{
+							cout << line << endl;
+						}
+						else 
+						{
+							matches.push_back(line);
+						}
+					}
+				}
+		    }
+		}
+	}
+	else
+	{
+		fstream in(file);
+
+    	cout << endl << "Searching file: " << file << endl;
 
 	    if (in.is_open())
 	    {
